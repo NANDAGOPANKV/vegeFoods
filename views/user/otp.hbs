@@ -1,0 +1,101 @@
+{{#if forgotP}}
+  <div class="d-flex justify-content-center align-items-center container">
+    <form action="/fotpcheck" method="post">
+      <div class="card py-3 px-5 border rounded h-50 text-center">
+        <h2 class="text-success">vegeFood</h2>
+        <h6 class="m-0 text-success">OTP verification</h6><span
+          class="mobile-text"
+        >Enter the code we just send on your email
+          <b class="text-danger">{{email}}</b></span>
+        {{! otp Input-fields }}
+        <div class="d-flex flex-row mt-5">
+          <input
+            type="text"
+            name="value1"
+            maxlength="1"
+            id="otp-first"
+            class="form-control"
+          />
+          <input
+            type="text"
+            name="value2"
+            id="otp-second"
+            maxlength="1"
+            class="form-control"
+          />
+          <input
+            type="text"
+            name="value3"
+            id="otp-third"
+            maxlength="1"
+            class="form-control"
+          />
+          <input
+            type="text"
+            name="value4"
+            id="otp-fourth"
+            maxlength="1"
+            class="form-control"
+          />
+        </div>
+        {{! otp Input-fields }}
+        <div class="text-center m-4"><span class="d-block mobile-text">Don't
+            receive the code?</span><span
+            class="font-weight-bold text-danger cursor"
+          >Resend</span></div>
+        <input class="btn btn-success p-2" type="submit" />
+      </div>
+    </form>
+  </div>
+
+{{else}}
+  <div class="d-flex justify-content-center align-items-center container">
+    <form action="/otpData" method="post">
+      <div class="card py-3 px-5 border rounded h-50 text-center">
+        <h2 class="text-success">vegeFood</h2>
+        <h6 class="m-0 text-success">OTP verification</h6><span
+          class="mobile-text"
+        >Enter the code we just send on your email
+          <b class="text-danger">{{email}}</b></span>
+        {{! otp Input-fields }}
+        <div class="d-flex flex-row mt-5">
+          <input
+            type="text"
+            name="value1"
+            maxlength="1"
+            id="otp-first"
+            class="form-control"
+          />
+          <input
+            type="text"
+            name="value2"
+            id="otp-second"
+            maxlength="1"
+            class="form-control"
+          />
+          <input
+            type="text"
+            name="value3"
+            id="otp-third"
+            maxlength="1"
+            class="form-control"
+          />
+          <input
+            type="text"
+            name="value4"
+            id="otp-fourth"
+            maxlength="1"
+            class="form-control"
+          />
+        </div>
+        {{! otp Input-fields }}
+        <div class="text-center m-4"><span class="d-block mobile-text">Don't
+            receive the code?</span><span
+            class="font-weight-bold text-danger cursor"
+          >Resend</span></div>
+        <input class="btn btn-success p-2" type="submit" />
+      </div>
+    </form>
+  </div>
+
+{{/if}}

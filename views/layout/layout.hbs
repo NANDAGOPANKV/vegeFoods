@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{#if user}}
+    {{>userHeader}}
+    {{/if}}
+
+
+    {{#if auth}}
+    {{>signInLinks}}
+    {{/if}}
+
+     
+     {{#if otp}}
+    {{>otpLinks}}
+    {{/if}}
+
+    {{#if admindash}}
+    {{>admindashLinks}}
+    {{/if}}
+</head>
+<body>
+
+    {{#if user}}
+    {{>userNavbar}}
+    {{/if}}
+    
+    {{{body}}}
+
+    {{#if user}}
+    {{>userScripts}}
+    {{/if}}
+
+
+    {{#if otp}}
+    {{>otpScript}}
+    {{/if}}
+
+    {{#if admindash}}
+    {{>admindashScripts}}
+    {{/if}}
+
+ 
+
+</body>
+</html>
