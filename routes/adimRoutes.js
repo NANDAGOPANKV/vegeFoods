@@ -5,10 +5,14 @@ const {
   adminsignuppost,
   adminSignIn,
   adminSignInPost,
+  blockOrUnblock,
+  addCategory,
+  categoryStatus,
+  removeCategory,
 } = require("../controllers/adminController/adminController");
 
-const users = require("../controllers/adminController/user");
-const User = require("../models/userSchema/usersSchema");
+const Admin = require("../models/adminSchema/adminSchema");
+const Category = require("../models/adminSchema/categorySchema");
 
 const adminRoute = express();
 
@@ -62,59 +66,43 @@ adminRoute.get("/userslist", isAdminLoggedIn, findAllUsers);
 
 // all orders
 adminRoute.get("/orderlist", isAdminLoggedIn, (req, res) => {
-  res.render("ordersList", { admin: true, admindash: true, users });
+  res.render("ordersList", { admin: true, admindash: true });
 });
 
+// ----------------------products
 // all product
-adminRoute.get("/productlist", isAdminLoggedIn, (req, res) => {
-  res.render("productlLst", { admin: true, admindash: true, users });
+adminRoute.get("/productlist", isAdminLoggedIn, async (req, res) => {
+  const adminData = await Admin.find().lean();
+  const [{ name }] = adminData;
+  res.render("productlLst", { admin: true, admindash: true, name });
 });
 
+
+// ----------------------category
 // all category
-adminRoute.get("/category", isAdminLoggedIn, (req, res) => {
-  res.render("category", { admin: true, admindash: true, users });
+adminRoute.get("/category", isAdminLoggedIn, async (req, res) => {
+  const findAllCategory = await Category.find().lean();
+  res.render("category", {
+    admin: true,
+    admindash: true,
+    category: findAllCategory,
+  });
 });
+
+// add category
+adminRoute.post("/addcategory", addCategory);
+
+adminRoute.get("/categoryStatus/:id", categoryStatus);
 
 // all profile
 adminRoute.get("/adminprofile", isAdminLoggedIn, (req, res) => {
   res.render("profile", { name: "McGopan", admindash: true });
 });
 
+// ----------------------user status
 // small functionalities
-adminRoute.get("/userStatus/:id", async (req, res) => {
-  const userId = req.params.id;
-
-  const findUserById = await User.findById(userId);
-
-  const {
-    bolckUser,
-    name,
-    email,
-    phone,
-    password,
-    address,
-    wishList,
-    createdAt,
-    updatedAt,
-  } = findUserById;
-
-  const updateUserById = await User.findByIdAndUpdate(userId, {
-    bolckUser: !bolckUser,
-    name,
-    email,
-    phone,
-    password,
-    address,
-    wishList,
-    createdAt,
-    updatedAt,
-  })
-    .then(() => {
-      res.redirect("/userslist");
-    })
-    .catch(() => {
-      res.send("can't do anything");
-    });
-});
+adminRoute.get("/userStatus/:id", blockOrUnblock);
+// small functionalities
+adminRoute.get("/userStatusremove/:id", removeCategory);
 
 module.exports = adminRoute;

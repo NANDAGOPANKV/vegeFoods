@@ -13,13 +13,15 @@ const userLogin = (req, res) => {
   res.render("signIn", { auth: true });
 };
 
-// sign
+// sign in
 const userSignIn = async (req, res) => {
   const { email, password } = req.body;
 
   const findUser = await User.findOne({ email: email });
+  const { bolckUser } = findUser;
+  console.log(bolckUser);
 
-  if (findUser) {
+  if (findUser && bolckUser != true) {
     const hashPasswordComparison = await bcript.compare(
       password,
       findUser.password
@@ -33,7 +35,11 @@ const userSignIn = async (req, res) => {
       res.render("signIn", { auth: true, incorectEOP: true });
     }
   } else {
-    res.render("signUp", { emailWOU: email, auth: true });
+    res.render("signUp", {
+      emailWOU: email,
+      auth: true,
+      adminBlockedUser: bolckUser,
+    });
   }
 };
 

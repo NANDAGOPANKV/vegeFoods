@@ -26,7 +26,7 @@
                     <a href="/userslist" class="nav-item nav-link"><i class="fa fa-th me-2"></i>users</a> 
                     <a href="/orderlist" class="nav-item nav-link"><i class="fa fa-th me-2"></i>orders</a> 
                     <a href="/category" class="nav-item nav-link"><i class="fa fa-th me-2"></i>category</a> 
-                    <a href="/copons" class="nav-item nav-link"><i class="fa fa-th me-2"></i>cupons</a> 
+                    
                 </div>
             </nav>
         </div>
@@ -52,62 +52,22 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             
-                            <span class="d-none d-lg-inline-flex">{{name}}</span>
+                            <span class="d-none d-lg-inline-flex">John Doe</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-light border-1 rounded-0 rounded-bottom m-0">
-                              <a href="/adminprofile" class="dropdown-item">My Profile</a>
-                             <a href="/adminsignout" onclick="return confirm(`are sure to sign out`)" class="dropdown-item">Log Out</a>
+                             <a href="/adminprofile" class="dropdown-item">My Profile</a>
+                            <a href="/adminsignout" onclick="return confirm(`are sure to sign out`)" class="dropdown-item">Log Out</a>
                         </div>
                     </div>
                 </div>
             </nav>
             <!-- Navbar End --> 
+
             <!-- Sale & Revenue Start -->
-            <div class="container-fluid pt-4 px-4">
-            <button onclick="location.href='/addproduct'" class="btn btn-success m-3" >Add Product</button>
-                <div class="row g-4">
-                    <div class="col-12">
-                        <div class="bg-light rounded h-100 p-4">
-                            <h6 class="mb-4">Responsive Table</h6>
-                            <div class="table-responsive">
-                                <table class="table  table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">image</th>
-                                            <th scope="col">name</th> 
-                                            <th scope="col">category</th>
-                                            <th scope="col">price</th>
-                                            <th scope="col">stock</th>
-                                            <th scope="col">status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {{#each users}}
-                                        <tr>
-                                            <th scope="row">{{@index}}</th>
-                                            <td>{{name}}</td> 
-                                            <td>{{email}}</td>
-                                            <td>{{phone}}</td>
-                                            <td>{{status}}</td>
-                                            <td><a href="/blockuser"><button>Block</button></a>
-                                            <a href="/unblockuser"><button>UnBlock</button></a></td>
-                                        </tr>
-                                        {{/each}}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          
             <!-- Sale & Revenue End --> 
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
     <!-- JavaScript Libraries -->
-    
-</div>
-
- 

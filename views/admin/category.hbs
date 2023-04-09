@@ -26,7 +26,7 @@
                     <a href="/userslist" class="nav-item nav-link"><i class="fa fa-th me-2"></i>users</a> 
                     <a href="/orderlist" class="nav-item nav-link"><i class="fa fa-th me-2"></i>orders</a> 
                     <a href="/category" class="nav-item nav-link"><i class="fa fa-th me-2"></i>category</a> 
-                    
+                    <a href="/copons" class="nav-item nav-link"><i class="fa fa-th me-2"></i>cupons</a> 
                 </div>
             </nav>
         </div>
@@ -64,6 +64,17 @@
 
             <!-- Sale & Revenue Start -->
             <div class="container-fluid pt-4 px-4">
+                <form action="/addcategory" method="post" class="row my-2 g-3">
+  <div class="col-auto">
+    <input type="text" class="form-control" required name="categoryName" id="inputPassword2" placeholder="Enter Category Name">
+                {{#if exists}}
+                <p class="pt-2 text-danger">you have entered existing category name</p>
+                {{/if}}
+  </div>
+  <div class="col-auto">
+    <button type="submit" class="btn btn-success mb-3">Add Category</button>
+  </div>
+</form>
                 <div class="row g-4">
                     <div class="col-12">
                         <div class="bg-light rounded h-100 p-4">
@@ -74,22 +85,23 @@
                                         <tr>
                                             <th scope="col">#</th>
                                             <th scope="col"> Name</th> 
-                                            <th scope="col">Email</th>
-                                            <th scope="col">Mobile</th>
+                                            
                                             <th scope="col">Status</th>
-                                            <th scope="col">Actions</th>
+                                            <th scope="col">Status</th>
+                                           
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{#each users}}
+                                        {{#each category}}
                                         <tr>
                                             <th scope="row">{{@index}}</th>
-                                            <td>{{name}}</td> 
-                                            <td>{{email}}</td>
-                                            <td>{{phone}}</td>
-                                            <td>{{status}}</td>
-                                            <td><a href="/blockuser"><button>Block</button></a>
-                                            <a href="/unblockuser"><button>UnBlock</button></a></td>
+                                            <td>{{categoryName}}</td> 
+                                            <td onclick="return confirm(`are you sure to Delete {{categoryName}} category`)" ><a href="/userStatusremove/{{_id}}"><button class="btn btn-danger">Delete</button></a></td>
+                                            {{#if categoryStatus}}
+                                            <td onclick="return confirm(`are you sure to UnList {{categoryName}} category`)" ><a href="/categoryStatus/{{_id}}"><button class="btn btn-danger">UnList</button></a></td>
+                                            {{else}}
+                                            <td onclick="return confirm(`are you sure to List {{categoryName}} category`)"><a href="/categoryStatus/{{_id}}"><button class="btn btn-success">List</button></a></td>
+                                            {{/if}}
                                         </tr>
                                         {{/each}}
                                     </tbody>
@@ -103,9 +115,5 @@
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
-
-    <!-- JavaScript Libraries -->
     
 </div>
-
- 
