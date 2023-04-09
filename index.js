@@ -6,6 +6,7 @@ const noCahse = require("nocache");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 // data base import
 const db = require("./db/connection");
@@ -15,6 +16,8 @@ const app = express();
 
 //------------- to connect public folder
 app.use(express.static(path.join(__dirname + "/public")));
+// cors
+app.use(cors());
 
 // view engine set up
 app.set("views", path.join(__dirname, "views"));
@@ -51,7 +54,7 @@ app.use(
   session({
     secret: "imgopan",
     saveUninitialized: true,
-    cookie: { maxAge: 60000 },
+    cookie: { maxAge: 600000 },
     resave: false,
   })
 );

@@ -15,8 +15,6 @@ const userLogin = (req, res) => {
 
 // sign
 const userSignIn = async (req, res) => {
-  console.log(req.body);
-
   const { email, password } = req.body;
 
   const findUser = await User.findOne({ email: email });
@@ -56,6 +54,7 @@ const otpDataFunction = async (req, res) => {
     email,
     password: hashPassword,
     phone,
+    bolckUser: false,
   });
 
   if (otpAuto === otpNumber) {
@@ -135,9 +134,6 @@ const forgotPasswordPost = async (req, res) => {
 // otp checker and updateor
 const fotpcheck = async (req, res) => {
   // user id here
-  console.log("details");
-  console.log(req.body);
-  console.log(userId);
 
   const findOneUser = await User.findById(userId);
 
@@ -150,6 +146,7 @@ const fotpcheck = async (req, res) => {
     createdAt: findOneUser?.createdAt,
     updatedAt: findOneUser?.updatedAt,
     password: findOneUser?.password,
+    bolckUser: findOneUser?.bolckUser,
   };
 
   const newHashedPassword = await bcript.hash(password, 10);
@@ -163,6 +160,7 @@ const fotpcheck = async (req, res) => {
     createdAt: useDatas.createdAt,
     updatedAt: useDatas.updatedAt,
     password: newHashedPassword,
+    bolckUser: useDatas.bolckUser,
   });
 
   res.redirect("/signin");

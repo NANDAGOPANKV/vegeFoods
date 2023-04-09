@@ -24,42 +24,62 @@
         <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
           <div class="bg-light rounded p-4 p-sm-5 my-4 mx-3">
             <div class="d-flex align-items-center justify-content-between mb-3">
-              <a href="index.html" class="">
+              <a href="/dashboard" class="">
                 <h3 class="text-primary">vegeFood</h3>
               </a>
               <h3>Sign In</h3>
             </div>
-            <div class="form-floating mb-3">
-              <input
-                type="email"
-                class="form-control"
-                id="floatingInput"
-                placeholder="name@example.com"
-              />
-              <label for="floatingInput">Email address</label>
-            </div>
-            <div class="form-floating mb-4">
-              <input
-                type="password"
-                class="form-control"
-                id="floatingPassword"
-                placeholder="Password"
-              />
-              <label for="floatingPassword">Password</label>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-4">
-              <div class="form-check">
+            {{! form }}
+            {{#if account}}
+              <p class="text-danger">Entered Account is Not Admin's Account</p>
+            {{/if}}
+            {{#if error}}
+              <h4 class="text-danger">Invalid Email or Password</h4>
+            {{/if}}
+            <form action="/adminsigninpost" method="post">
+              <div class="form-floating mb-3">
                 <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="exampleCheck1"
+                  type="email"
+                  name="email"
+                  class="form-control"
+                  id="floatingInput"
+                  placeholder="name@example.com"
+                  required
                 />
-                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                <label for="floatingInput">Email address</label>
               </div>
-              <a href="">Forgot Password</a>
-            </div>
-            <button onclick="location.href='/dashboard'" type="submit" class="btn btn-primary py-3 w-100 mb-4">Sign
-              In</button>
+              <div class="form-floating mb-4">
+                <input
+                  type="password"
+                  name="password"
+                  class="form-control"
+                  id="floatingPassword"
+                  placeholder="Password"
+                  required
+                />
+                <label for="floatingPassword">Password</label>
+              </div>
+              <div
+                class="d-flex align-items-center justify-content-between mb-4"
+              >
+                <div class="form-check">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    id="exampleCheck1"
+                  />
+                  <label class="form-check-label" for="exampleCheck1">Check me
+                    out</label>
+                </div>
+                <a href="">Forgot Password</a>
+              </div>
+              <input
+                type="submit"
+                value="Sign In"
+                class="btn btn-primary py-3 w-100 mb-4"
+              />
+            </form>
+            {{! form }}
             <p class="text-center mb-0">Don't have an Account?
               <a href="/adminsignup">Sign Up</a></p>
           </div>
