@@ -14,6 +14,8 @@ const {
 const {
   addProducts,
   listOrUnlistProduct,
+  singleProduct,
+  updateProduct,
 } = require("../controllers/adminController/adminProducts");
 
 const Admin = require("../models/adminSchema/adminSchema");
@@ -131,6 +133,12 @@ adminRoute.post("/addproduct", upload.array("image", 3), addProducts);
 // list or unlist product
 adminRoute.get("/productStatus/:id", listOrUnlistProduct);
 
+// single view admin
+adminRoute.get("/productStatus/:id", (req, res) => {
+  const name = "ds";
+  res.render("addProducts", { admin: true, admindash: true, name });
+});
+
 // delete products
 adminRoute.get("/deleteProduct/:id", async (req, res) => {
   const productId = req.params.id;
@@ -143,6 +151,15 @@ adminRoute.get("/deleteProduct/:id", async (req, res) => {
       res.send("sorry cannot delete image");
     });
 });
+
+// single products view
+adminRoute.get("/productview/:id", async (req, res) => {
+  const productId = req.params.id;
+
+  const findProduct = await Product.findById(productId).lean();
+});
+
+// update user
 
 // ----------------------category
 // all category

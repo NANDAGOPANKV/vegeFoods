@@ -36,7 +36,6 @@ const addProducts = async (req, res) => {
     stock: req.body.stock,
     image: img,
   };
- 
 
   const productAdded = new Product({
     name: productObj.name,
@@ -49,6 +48,7 @@ const addProducts = async (req, res) => {
   });
 
   const added = await productAdded.save();
+
   if (added) {
     res.redirect("/productlist");
   } else {
@@ -56,4 +56,22 @@ const addProducts = async (req, res) => {
   }
 };
 
-module.exports = { listOrUnlistProduct, addProducts };
+// product edit or add new
+const singleProduct = async (req, res) => {
+  const productId = req.params.id;
+
+  const findProduct = await Product.findById(productId).lean();
+
+  res.render("singleProductView", { findProduct });
+};
+
+const updateProduct = (req, res) => {
+  res.render("home", { admindash: true  });
+};
+
+module.exports = {
+  listOrUnlistProduct,
+  addProducts,
+  singleProduct,
+  updateProduct,
+};

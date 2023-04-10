@@ -79,6 +79,7 @@
                                             <th scope="col">price</th>
                                             <th scope="col">stock</th>
                                             <th scope="col">status</th>
+                                            <th scope="col">edit</th>
                                             <th scope="col">delete</th>
                                         </tr>
                                     </thead>
@@ -86,7 +87,7 @@
                                         {{#each findAllProducts}}
                                         <tr>
                                             <th scope="row">{{@index}}</th>
-                                            <td><img src="/productImage/{{image.[0]}}" style="width: 75px; height: 75px; object-fit: fill;" alt="nop"></td> 
+                                            <td><a href="/productview/{{_id}}"><img src="/productImage/{{image.[0]}}" style="width: 75px; height: 75px; object-fit: fill;" alt="nop"></a></td> 
                                             <td>{{name}}</td>
                                             <td>{{price}}</td>
                                             <td>{{stock}}</td>
@@ -95,7 +96,8 @@
                                             {{else}}
                                              <td> <a onclick="return confirm(`are sure to list`)" href="/productStatus/{{_id}}"><button class="btn btn-success">List</button></a></td>
                                             {{/if}}
-                                            <td><a onclick="return confirm(`are sure to delete`)" href="deleteProduct/{{_id}}"><button class="btn btn-success" >delete</button></a></td>
+                                            <td><a onclick="return confirm(`are sure to edit`)" href="/updateitem/{{_id}}"><button class="btn btn-success" >edit</button></a></td>
+                                            <td><a onclick="return confirm(`are sure to delete`)" href="/deleteProduct/{{_id}}"><button class="btn btn-success" >delete</button></a></td>
                                         </tr>
                                         {{/each}}
                                     </tbody>
@@ -109,8 +111,7 @@
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
-
-    <!-- JavaScript Libraries -->
+ 
     
 </div>
 
