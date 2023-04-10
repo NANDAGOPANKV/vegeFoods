@@ -37,11 +37,14 @@ function noEntryAfterSignIn(req, res, next) {
   }
 }
 
-// dashboard
-adminRoute.get("/dashboard", isAdminLoggedIn, (req, res) => {
-  res.render("home", { admindash: true });
-});
+// admin name funtion
+async function nameOfAdmin() {
+  const adminData = await Admin.find().lean();
+  const [{ name }] = adminData;
+  return name;
+}
 
+// ----------------------authentication
 // signIn
 adminRoute.get("/adminsignin", noEntryAfterSignIn, adminSignIn);
 // signIn post
@@ -61,22 +64,51 @@ adminRoute.get("/adminsignout", (req, res) => {
   res.redirect("/adminsignin");
 });
 
+// ----------------------home
+// dashboard
+adminRoute.get("/dashboard", isAdminLoggedIn, (req, res) => {
+  res.render("home", { admindash: true });
+});
+
+// ----------------------users
 // all users
 adminRoute.get("/userslist", isAdminLoggedIn, findAllUsers);
 
+// ----------------------orders
 // all orders
 adminRoute.get("/orderlist", isAdminLoggedIn, (req, res) => {
   res.render("ordersList", { admin: true, admindash: true });
 });
 
-// ----------------------products
+// ----------------------products Products
 // all product
 adminRoute.get("/productlist", isAdminLoggedIn, async (req, res) => {
-  const adminData = await Admin.find().lean();
-  const [{ name }] = adminData;
-  res.render("productlLst", { admin: true, admindash: true, name });
+  const name = nameOfAdmin();
+  res.render("productlLst", { admin: true, admindash: true, name: name.name });
 });
 
+// product methods
+
+// add products
+adminRoute.get("/addproduct", (req, res) => {
+  const name = nameOfAdmin();
+
+  res.render("addProducts", { admin: true, admindash: true, name });
+});
+// add products post
+adminRoute.post("/addproduct", (req, res) => {
+  const productObj = {
+    name: req.body.name,
+    price: req.body.price,
+    description: req.body.description,
+    stock: req.body.stock,
+    image: req.body.image,
+  };
+
+  
+
+  res.send(productObj);
+});
 
 // ----------------------category
 // all category
@@ -94,6 +126,7 @@ adminRoute.post("/addcategory", addCategory);
 
 adminRoute.get("/categoryStatus/:id", categoryStatus);
 
+// ----------------------category
 // all profile
 adminRoute.get("/adminprofile", isAdminLoggedIn, (req, res) => {
   res.render("profile", { name: "McGopan", admindash: true });
