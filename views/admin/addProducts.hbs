@@ -68,7 +68,7 @@
                 <div class="row g-4">
                     <div class="col-12">
                        
-                      <form action="/addproduct" method="post">
+                      <form action="/addproduct" method="post" enctype="multipart/form-data">
            
   <div class="form-group m-3">
     <label for="productName">Name:</label>
@@ -88,7 +88,7 @@
   </div>
   <div class="form-group m-3">
     <label for="productImage">Image:</label><br>
-    <input name="image" required type="file" class="form-control-file" id="productImage">
+    <input multiple name="image" required type="file" class="form-control-file" id="productImage">
   </div>
   
   <button type="submit" class="btn btn-primary form-group m-3">Submit</button>
@@ -96,6 +96,7 @@
 
                     </div>
                 </div>
+
             </div>
             <!-- only here --> 
         <!-- Back to Top -->

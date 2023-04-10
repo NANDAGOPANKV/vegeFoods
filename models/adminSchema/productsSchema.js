@@ -18,8 +18,8 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
   image: {
-    type: String,
-    required: false,
+    type: Array,
+    required: true,
   },
   discoutPrice: {
     type: Number,

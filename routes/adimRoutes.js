@@ -11,8 +11,30 @@ const {
   removeCategory,
 } = require("../controllers/adminController/adminController");
 
+const {
+  addProducts,
+  listOrUnlistProduct,
+} = require("../controllers/adminController/adminProducts");
+
 const Admin = require("../models/adminSchema/adminSchema");
 const Category = require("../models/adminSchema/categorySchema");
+const Product = require("../models/adminSchema/productsSchema");
+
+const multer = require("multer");
+const path = require("path");
+
+// multer to upload images
+const storeage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../public/productImage"));
+  },
+  filename: function (req, file, cb) {
+    const name = Date.now() + "-" + file.originalname;
+    cb(null, name);
+  },
+});
+
+const upload = multer({ storage: storeage });
 
 const adminRoute = express();
 
@@ -84,10 +106,18 @@ adminRoute.get("/orderlist", isAdminLoggedIn, (req, res) => {
 // all product
 adminRoute.get("/productlist", isAdminLoggedIn, async (req, res) => {
   const name = nameOfAdmin();
-  res.render("productlLst", { admin: true, admindash: true, name: name.name });
+
+  const findAllProducts = await Product.find().lean();
+
+  res.render("productlLst", {
+    admin: true,
+    admindash: true,
+    name: name.name,
+    findAllProducts,
+  });
 });
 
-// product methods
+// product methods********
 
 // add products
 adminRoute.get("/addproduct", (req, res) => {
@@ -96,18 +126,22 @@ adminRoute.get("/addproduct", (req, res) => {
   res.render("addProducts", { admin: true, admindash: true, name });
 });
 // add products post
-adminRoute.post("/addproduct", (req, res) => {
-  const productObj = {
-    name: req.body.name,
-    price: req.body.price,
-    description: req.body.description,
-    stock: req.body.stock,
-    image: req.body.image,
-  };
+adminRoute.post("/addproduct", upload.array("image", 3), addProducts);
 
-  
+// list or unlist product
+adminRoute.get("/productStatus/:id", listOrUnlistProduct);
 
-  res.send(productObj);
+// delete products
+adminRoute.get("/deleteProduct/:id", async (req, res) => {
+  const productId = req.params.id;
+
+  const deleteProduct = await Product.findByIdAndRemove(productId)
+    .then(() => {
+      res.redirect("/productlist");
+    })
+    .catch(() => {
+      res.send("sorry cannot delete image");
+    });
 });
 
 // ----------------------category
@@ -124,6 +158,7 @@ adminRoute.get("/category", isAdminLoggedIn, async (req, res) => {
 // add category
 adminRoute.post("/addcategory", addCategory);
 
+// list or unlist category
 adminRoute.get("/categoryStatus/:id", categoryStatus);
 
 // ----------------------category

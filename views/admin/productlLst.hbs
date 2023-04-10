@@ -72,26 +72,30 @@
                             <div class="table-responsive">
                                 <table class="table  table-hover">
                                     <thead>
-                                        <tr>
+                                        <tr >
                                             <th scope="col">#</th>
                                             <th scope="col">image</th>
                                             <th scope="col">name</th> 
-                                            <th scope="col">category</th>
                                             <th scope="col">price</th>
                                             <th scope="col">stock</th>
                                             <th scope="col">status</th>
+                                            <th scope="col">delete</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        {{#each users}}
+                                    <tbody >
+                                        {{#each findAllProducts}}
                                         <tr>
                                             <th scope="row">{{@index}}</th>
-                                            <td>{{name}}</td> 
-                                            <td>{{email}}</td>
-                                            <td>{{phone}}</td>
-                                            <td>{{status}}</td>
-                                            <td><a href="/blockuser"><button>Block</button></a>
-                                            <a href="/unblockuser"><button>UnBlock</button></a></td>
+                                            <td><img src="/productImage/{{image.[0]}}" style="width: 75px; height: 75px; object-fit: fill;" alt="nop"></td> 
+                                            <td>{{name}}</td>
+                                            <td>{{price}}</td>
+                                            <td>{{stock}}</td>
+                                            {{#if Status}}
+                                             <td> <a onclick="return confirm(`are sure to unlist`)" href="/productStatus/{{_id}}"><button class="btn btn-danger" >unList</button></a></td>
+                                            {{else}}
+                                             <td> <a onclick="return confirm(`are sure to list`)" href="/productStatus/{{_id}}"><button class="btn btn-success">List</button></a></td>
+                                            {{/if}}
+                                            <td><a onclick="return confirm(`are sure to delete`)" href="deleteProduct/{{_id}}"><button class="btn btn-success" >delete</button></a></td>
                                         </tr>
                                         {{/each}}
                                     </tbody>
