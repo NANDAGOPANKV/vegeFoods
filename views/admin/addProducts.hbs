@@ -90,6 +90,21 @@
     <label for="productImage">Image:</label><br>
     <input multiple name="image" required type="file" class="form-control-file" id="productImage">
   </div>
+  <div class="form-group m-3">
+ 
+
+    
+    
+   <div class="form-group input-group-md ">
+                        <select class="form-select form-select-sm" name="category" aria-label=".form-select-sm example" style="width: 100%;height:38px; border-color:gray; border-radius: 3px">
+                           <option selected>categorys</option>
+    {{#each categorysName}}
+    <option value="{{categoryName}}">{{categoryName}}</option>
+    {{/each}}
+                        </select>
+                    </div>
+
+  </div>
   
   <button type="submit" class="btn btn-primary form-group m-3">Submit</button>
 </form>

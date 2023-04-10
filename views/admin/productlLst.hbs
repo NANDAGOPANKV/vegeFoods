@@ -96,7 +96,7 @@
                                             {{else}}
                                              <td> <a onclick="return confirm(`are sure to list`)" href="/productStatus/{{_id}}"><button class="btn btn-success">List</button></a></td>
                                             {{/if}}
-                                            <td><a onclick="return confirm(`are sure to edit`)" href="/updateitem/{{_id}}"><button class="btn btn-success" >edit</button></a></td>
+                                            <td><a onclick="return confirm(`are sure to edit`)" href="/updateitem?id={{_id}}"><button class="btn btn-success" >edit</button></a></td>
                                             <td><a onclick="return confirm(`are sure to delete`)" href="/deleteProduct/{{_id}}"><button class="btn btn-success" >delete</button></a></td>
                                         </tr>
                                         {{/each}}

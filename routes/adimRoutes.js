@@ -16,6 +16,12 @@ const {
   listOrUnlistProduct,
   singleProduct,
   updateProduct,
+  updatePage,
+  productLists,
+  deleteProduct,
+  allCategory,
+  updateItem,
+  updateItemPost,
 } = require("../controllers/adminController/adminProducts");
 
 const Admin = require("../models/adminSchema/adminSchema");
@@ -106,26 +112,20 @@ adminRoute.get("/orderlist", isAdminLoggedIn, (req, res) => {
 
 // ----------------------products Products
 // all product
-adminRoute.get("/productlist", isAdminLoggedIn, async (req, res) => {
-  const name = nameOfAdmin();
-
-  const findAllProducts = await Product.find().lean();
-
-  res.render("productlLst", {
-    admin: true,
-    admindash: true,
-    name: name.name,
-    findAllProducts,
-  });
-});
+adminRoute.get("/productlist", isAdminLoggedIn, productLists);
 
 // product methods********
 
 // add products
-adminRoute.get("/addproduct", (req, res) => {
+adminRoute.get("/addproduct", async (req, res) => {
   const name = nameOfAdmin();
-
-  res.render("addProducts", { admin: true, admindash: true, name });
+  const categorysName = await Category.find().lean();
+  res.render("addProducts", {
+    admin: true,
+    admindash: true,
+    name,
+    categorysName,
+  });
 });
 // add products post
 adminRoute.post("/addproduct", upload.array("image", 3), addProducts);
@@ -140,16 +140,16 @@ adminRoute.get("/productStatus/:id", (req, res) => {
 });
 
 // delete products
-adminRoute.get("/deleteProduct/:id", async (req, res) => {
-  const productId = req.params.id;
+adminRoute.get("/deleteProduct/:id", deleteProduct);
 
-  const deleteProduct = await Product.findByIdAndRemove(productId)
-    .then(() => {
-      res.redirect("/productlist");
-    })
-    .catch(() => {
-      res.send("sorry cannot delete image");
-    });
+// update item
+adminRoute.get("/updateitem", updateItem);
+// post
+adminRoute.post("/updateitem", updateItemPost);
+
+adminRoute.post("/updateProductTo", (req, res) => {
+  res.send(req.body.name);
+  console.log(req.body);
 });
 
 // single products view
@@ -159,18 +159,9 @@ adminRoute.get("/productview/:id", async (req, res) => {
   const findProduct = await Product.findById(productId).lean();
 });
 
-// update user
-
 // ----------------------category
 // all category
-adminRoute.get("/category", isAdminLoggedIn, async (req, res) => {
-  const findAllCategory = await Category.find().lean();
-  res.render("category", {
-    admin: true,
-    admindash: true,
-    category: findAllCategory,
-  });
-});
+adminRoute.get("/category", isAdminLoggedIn, allCategory);
 
 // add category
 adminRoute.post("/addcategory", addCategory);
