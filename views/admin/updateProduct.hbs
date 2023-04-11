@@ -71,70 +71,106 @@
     <p>{{product}}</p>
 </div>
 
-<div class="container mt-2">
-	<div class="row justify-content-center align-items-center text-center p-2">
-		<div class="m-1 col-sm-8 col-md-6 col-lg-4 shadow-sm p-3 mb-5 bg-white border rounded">
+ 
+
+<div class="container w-100" >
+
+    <div class="row">
+        <div class="col-6">
+            <div class="container text-center border w-100 h-100 rounded">
+       <span>Edit Image</span>
+           {{!-- img1, img2, img3 --}}
+<div>
+    {{#if img1}}
+                <img src="/productImage/{{img1}}" style="width: 100px; height: 100px;" alt="">
+{{/if}}
+{{#if img2}}
+                <img src="/productImage/{{img2}}" style="width: 100px; height: 100px;" alt="">
+{{/if}}
+{{#if img3}}
+                <img src="/productImage/{{img3}}" style="width: 100px; height: 100px;" alt="">
+{{/if}}
+<div>
+
+</div>
+</div>
+<form action="/changeImage?id={{_id}}" method="post" enctype="multipart/form-data"> 
+  <div class="form-group input-group-md my-2">
+  <input type="file" class="form-control" required name="image" multiple value="{{image}}" name="image" placeholder="product img">
+  </div><br>
+<input type="submit" value="submit">
+</form>
+    </div>
+        </div>
+        <div class="col-6">
+           <div class="container w-100">
+    
+        
+	<div class="row w-100 justify-content-center align-items-center text-center p-2">
+		<div class="m-1 w-100 col-sm-8 col-md-6 col-lg-4 shadow-sm p-3 mb-5 bg-white border rounded">
+  
 			<div class="pt-1  pb-3">
-				<img class="rounded mx-auto d-block"
-					src="https://freelogovector.net/wp-content/uploads/logo-images-13/microsoft-cortana-logo-vector-73233.png"
-					alt="" width=70px height=70px>
 				<p class="text-center text-uppercase mt-1">UPDATE PRODUCT</p>
-				<form class="form text-center" action="/updateitem" method="POST"   >
+			 
+          
+
+                <form class="form text-start" action="/updateitem/?id={{_id}}" method="POST"  >
 				
-					<div class="form-group input-group-md">
-						<input type="text" class="form-control" value="{{name}}" name="name" aria-describedby="emailHelp"
-							placeholder="Product Name">
-						<!--<div class="invalid-feedback">
-							 Errors in email during form validation, also add .is-invalid class to the input fields
-						</div> -->
-					</div><br>
-					<div class="form-group input-group-md">
-						<input type="text" class="form-control" value="{{price}}" name="price" aria-describedby="emailHelp"
-							placeholder="Brand Name">
-						<!--<div class="invalid-feedback">
-							 Errors in email during form validation, also add .is-invalid class to the input fields
-						</div> -->
-					</div><br>
-					<div class="form-group input-group-md">
-						<input type="file" class="form-control" name="image" multiple name="image" placeholder="product img">
-						<!--<div class="invalid-feedback">
-							 Errors in password during form validation, also add .is-invalid class to the input fields
-						</div> -->
-					</div><br>
-					<div class="form-group input-group-md">
-						<input type="number" class="form-control" value="{{price}}"  name="price" placeholder="Price">
-						<!--<div class="invalid-feedback">
-							 Errors in password during form validation, also add .is-invalid class to the input fields
-						</div> -->
-					</div><br>
-					
-					<div class="form-group input-group-md">
-						<input type="number" class="form-control"  value="{{stock}}" name="quantity" placeholder="Quantity">
-						<!--<div class="invalid-feedback">
-							 Errors in password during form validation, also add .is-invalid class to the input fields
-						</div> -->
-					</div><br>
+					 {{!-- name --}}
+					 <div class="form-group input-group-md">
+                        <span>name</span><br>
+                        <input class="form-control" type="text" name="name" required value="{{name}}">
+                     </div>
+					 {{!-- price --}}
+					 <div class="form-group input-group-md">
+                        <span>price</span><br>
+                        <input class="form-control" type="text" name="price" required value="{{price}}">
+                     </div>
+					 {{!-- stock --}}
+					 <div class="form-group input-group-md">
+                        <span>stock</span><br>
+                        <input class="form-control" type="text" name="stock" required value="{{stock}}">
+                     </div>
+					 {{!-- description --}}
+					 <div class="form-group input-group-md">
+                        <span>description</span><br>
+                        <input class="form-control py-3" type="text" name="description" required value="{{description}}">
+                     </div>
+                     
+				 
+					 
                     <div class="form-group input-group-md ">
+                        <span>category</span>
                         <select class="form-select form-select-sm" name="category" aria-label=".form-select-sm example" style="width: 100%;height:38px; border-color:gray; border-radius: 3px">
+                            {{#if category}}
                             <option selected>{{category}}</option>
-							{{#each category}}
-                            <option value="{{name}}">{{name}}</option>
+                            {{else}}
+                            <option selected>choose a category</option>
+                            {{/if}}
+							{{#each categoryObj}}
+                            <option value="{{categoryName}}" >{{categoryName}}</option>
 							{{/each}}
                         </select>
+                    </div>
+                    <div>
+                        
                     </div>
 					<button class="btn btn-block btn-success mt-4" type="submit">
 						Update Product
 					</button>
 				</form>
+                {{!-- new form --}}
 			</div>
 		</div>
-	</div>
+	</div> 
+</div> 
 </div>
-                    </div>
-                </div>
-
-            </div>
-            <!-- only here --> 
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
-    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- only here --> 
+<!-- Back to Top -->
+<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+</div>

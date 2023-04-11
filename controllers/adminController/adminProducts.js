@@ -30,17 +30,13 @@ const listOrUnlistProduct = async (req, res) => {
 const addProducts = async (req, res) => {
   const img = req.files.map((file) => file.filename);
 
-  // categorye here
-  const categorysName = await Category.find().lean();
-
-  
-
   const productObj = {
     name: req.body.name,
     price: req.body.price,
     description: req.body.description,
     stock: req.body.stock,
     image: img,
+    category: req.body.category,
   };
 
   const productAdded = new Product({
@@ -51,6 +47,7 @@ const addProducts = async (req, res) => {
     image: productObj.image,
     discoutPrice: 0,
     Status: true,
+    category: productObj.category,
   });
 
   const added = await productAdded.save();
@@ -121,12 +118,17 @@ const allCategory = async (req, res) => {
   });
 };
 
+// show updated item
 const updateItem = async (req, res) => {
   const id = req.query.id;
 
   const findOne = await Product.findById(id);
 
-  const { name, price, description, stock, _id } = findOne;
+  // categorye here
+  const categoryObj = await Category.find().lean();
+
+  const { name, price, description, stock, _id, category, image } = findOne;
+  const [img1, img2, img3] = image;
 
   res.render("updateProduct", {
     admin: true,
@@ -136,13 +138,107 @@ const updateItem = async (req, res) => {
     description,
     stock,
     _id,
+    categoryObj,
+    category,
+    img1,
+    img2,
+    img3,
   });
 };
 
-const updateItemPost = (req, res) => {
-  console.log("hikjhkljo");
-  console.log(req.body);
-  res.send(req.body);
+// submit updated item
+const updateItemPost = async (req, res) => {
+  const productId = req.query.id;
+
+  const updatedField = {
+    name: req.body.name,
+    price: req.body.price,
+    description: req.body.description,
+    stock: req.body.stock,
+    category: req.body.category,
+  };
+
+  const updateProductById = await Product.findByIdAndUpdate(productId, {
+    name: updatedField.name,
+    price: updatedField.price,
+    category: updatedField.category,
+    stock: updatedField.stock,
+    description: updatedField.description,
+  })
+    .then(() => {
+      res.redirect("/productlist");
+    })
+    .catch((err) => {
+      res.send(err.message);
+    });
+};
+
+// view single product
+const viewSinglePage = async (req, res) => {
+  const id = req.query.id;
+
+  const findOne = await Product.findById(id);
+
+  // categorye here
+  const categoryObj = await Category.find().lean();
+
+  const {
+    name,
+    price,
+    description,
+    stock,
+    _id,
+    category,
+    image,
+    Status,
+    discoutPrice,
+  } = findOne;
+  const [img1, img2, img3] = image;
+
+  if (discoutPrice > 0) {
+    dscp = true;
+  } else {
+    dscp = false;
+  }
+
+  res.render("spv", {
+    admin: true,
+    admindash: true,
+    name,
+    price,
+    description,
+    stock,
+    _id,
+    categoryObj,
+    category,
+    img1,
+    img2,
+    img3,
+    Status,
+    discoutPrice,
+    dscp,
+  });
+};
+
+const chengeIMG = async (req, res) => {
+  const productId = req.query.id;
+  const img = req.files.map((file) => file.filename);
+  const findOne = await Product.findById(productId);
+  const { name, price, description, stock, category, image } = findOne;
+  const updateProductById = await Product.findByIdAndUpdate(productId, {
+    name,
+    price,
+    category,
+    stock,
+    description,
+    image: img,
+  })
+    .then(() => {
+      res.redirect("/productlist");
+    })
+    .catch((err) => {
+      res.send(err.message);
+    });
 };
 
 module.exports = {
@@ -156,4 +252,6 @@ module.exports = {
   allCategory,
   updateItem,
   updateItemPost,
+  viewSinglePage,
+  chengeIMG,
 };

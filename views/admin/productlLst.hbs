@@ -77,6 +77,7 @@
                                             <th scope="col">image</th>
                                             <th scope="col">name</th> 
                                             <th scope="col">price</th>
+                                            <th scope="col">category</th>
                                             <th scope="col">stock</th>
                                             <th scope="col">status</th>
                                             <th scope="col">edit</th>
@@ -87,9 +88,10 @@
                                         {{#each findAllProducts}}
                                         <tr>
                                             <th scope="row">{{@index}}</th>
-                                            <td><a href="/productview/{{_id}}"><img src="/productImage/{{image.[0]}}" style="width: 75px; height: 75px; object-fit: fill;" alt="nop"></a></td> 
+                                            <td><a href="/viewsignproduct?id={{_id}}"><img class="rounded" src="/productImage/{{image.[0]}}" style="width: 75px; height: 75px; object-fit: fill;" alt="nop"></a></td> 
                                             <td>{{name}}</td>
                                             <td>{{price}}</td>
+                                            <td>{{category}}</td>
                                             <td>{{stock}}</td>
                                             {{#if Status}}
                                              <td> <a onclick="return confirm(`are sure to unlist`)" href="/productStatus/{{_id}}"><button class="btn btn-danger" >unList</button></a></td>

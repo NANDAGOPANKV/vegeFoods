@@ -29,6 +29,10 @@ const productSchema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
+  category: {
+    type: String,
+    required: false,
+  },
 });
 
 module.exports = mongoose.model("Product", productSchema);

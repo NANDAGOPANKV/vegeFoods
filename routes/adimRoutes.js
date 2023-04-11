@@ -22,6 +22,8 @@ const {
   allCategory,
   updateItem,
   updateItemPost,
+  viewSinglePage,
+  chengeIMG,
 } = require("../controllers/adminController/adminProducts");
 
 const Admin = require("../models/adminSchema/adminSchema");
@@ -117,7 +119,7 @@ adminRoute.get("/productlist", isAdminLoggedIn, productLists);
 // product methods********
 
 // add products
-adminRoute.get("/addproduct", async (req, res) => {
+adminRoute.get("/addproduct", isAdminLoggedIn, async (req, res) => {
   const name = nameOfAdmin();
   const categorysName = await Category.find().lean();
   res.render("addProducts", {
@@ -143,21 +145,14 @@ adminRoute.get("/productStatus/:id", (req, res) => {
 adminRoute.get("/deleteProduct/:id", deleteProduct);
 
 // update item
-adminRoute.get("/updateitem", updateItem);
+adminRoute.get("/updateitem", isAdminLoggedIn, updateItem);
 // post
 adminRoute.post("/updateitem", updateItemPost);
-
-adminRoute.post("/updateProductTo", (req, res) => {
-  res.send(req.body.name);
-  console.log(req.body);
-});
+// image editor
+adminRoute.post("/changeImage", upload.array("image", 3), chengeIMG);
 
 // single products view
-adminRoute.get("/productview/:id", async (req, res) => {
-  const productId = req.params.id;
-
-  const findProduct = await Product.findById(productId).lean();
-});
+adminRoute.get("/viewsignproduct", isAdminLoggedIn, viewSinglePage);
 
 // ----------------------category
 // all category
@@ -167,7 +162,7 @@ adminRoute.get("/category", isAdminLoggedIn, allCategory);
 adminRoute.post("/addcategory", addCategory);
 
 // list or unlist category
-adminRoute.get("/categoryStatus/:id", categoryStatus);
+adminRoute.get("/categoryStatus/:id", isAdminLoggedIn, categoryStatus);
 
 // ----------------------category
 // all profile

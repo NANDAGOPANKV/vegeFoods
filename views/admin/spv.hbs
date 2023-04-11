@@ -68,44 +68,33 @@
                 <div class="row g-4">
                     <div class="col-12">
                        
-                      <form action="/addproduct" method="post" enctype="multipart/form-data">
-           
-  <div class="form-group m-3">
-    <label for="productName">Name:</label>
-    <input name="name" required type="text" class="form-control" id="productName" placeholder="Enter product name">
+                     <div class="card" style="width: 18rem;">
+  <img class="card-img-top" src="productImage/{{img1}}" alt="Card image cap">
+  <div class="card-body">
+    <h5 class="card-title">{{name}}</h5>
+    <p class="card-text">{{description}}</p>
   </div>
-   <div class="form-group m-3">
-    <label for="productPrice">Price:</label>
-    <input name="price" required type="number" class="form-control"  placeholder="Enter product price">
-  </div>
-  <div class="form-group m-3">
-    <label for="productDescription">Description:</label>
-    <textarea name="description" required class="form-control" id="productDescription" placeholder="Enter product description"></textarea>
-  </div>
-   <div class="form-group m-3">
-    <label for="productPrice">Stock:</label>
-    <input name="stock" required type="number" class="form-control"  placeholder="Enter product stock">
-  </div>
-  <div class="form-group m-3">
-    <label for="productImage">Image:</label><br>
-    <input multiple name="image" required type="file" class="form-control-file" id="productImage">
-  </div>
-  <div class="form-group m-3">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item text-success">MRP: &#x20B9; {{price}}</li>
+    <li class="list-group-item text-success">stock: {{stock}}</li>
+    {{#if Status}}
+    <li class="list-group-item text-success">availble: listed</li>
+    {{else}}
+    <li class="list-group-item text-danger">availble: unlisted</li>
+    {{/if}}
+    {{#if dscp}}
+    <li class="list-group-item text-success">discount: &#x20B9; {{discoutPrice}}</li>
+    {{else}}
+    <li class="list-group-item text-danger">discount: &#x20B9; {{discoutPrice}}</li>
+    {{/if}}
     
-    
-   <div class="form-group input-group-md ">
-                        <select class="form-select form-select-sm" name="category" aria-label=".form-select-sm example" style="width: 100%;height:38px; border-color:gray; border-radius: 3px">
-                           <option selected>choose a category</option>
-    {{#each categorysName}}
-    <option value="{{categoryName}}">{{categoryName}}</option>
-    {{/each}}
-                        </select>
-                    </div>
-
+  </ul>
+  <div class="card-body">
+     
+    <a href="/productlist" class="card-link"><button class="btn bg-primary text-white" >Go Back</button></a>
+    <a href="/updateitem?id={{_id}}" class="card-link"><button class="btn bg-primary text-white" >Edit</button></a>
   </div>
-  
-  <button type="submit" class="btn btn-primary form-group m-3">Submit</button>
-</form>
+</div>
 
                     </div>
                 </div>
@@ -115,4 +104,3 @@
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
- 
