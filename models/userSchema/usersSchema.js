@@ -26,10 +26,6 @@ const usersSchema = mongoose.Schema(
       type: Array,
       required: false,
     },
-    wishList: {
-      type: Array,
-      required: false,
-    },
   },
   { timestamps: true }
 );

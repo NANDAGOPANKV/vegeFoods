@@ -12,6 +12,7 @@ const {
   forgotPasswordPost,
   fotpcheck,
   allProducts,
+  findProductByCategory,
 } = require("../controllers/userControeller/userControeller");
 const Product = require("../models/adminSchema/productsSchema");
 
@@ -59,11 +60,14 @@ userRouter.get("/about", (req, res) => {
 // shop
 userRouter.get("/shop", allProducts);
 
+// list of products by category
+userRouter.get("/categoryProduct", isUserLoggedIn, findProductByCategory);
+
 // single Product
 userRouter.get("/product", isUserLoggedIn, async (req, res) => {
   const productId = req.query.id;
   const findProduct = await Product.findById(productId);
-  const { name, price, image, stock, description } = findProduct;
+  const { name, price, image, stock, description, cart } = findProduct;
   res.render("singleProduct", {
     user: true,
     userLogged: true,
@@ -72,6 +76,7 @@ userRouter.get("/product", isUserLoggedIn, async (req, res) => {
     image,
     stock,
     description,
+    cart,
   });
 });
 

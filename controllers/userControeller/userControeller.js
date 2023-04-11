@@ -10,6 +10,7 @@ const { otpGen } = require("../../controllers/userControeller/otpController");
 
 // product
 const Product = require("../../models/adminSchema/productsSchema");
+const Category = require("../../models/adminSchema/categorySchema");
 
 // user controller functions
 const userLogin = (req, res) => {
@@ -180,17 +181,39 @@ const fotpcheck = async (req, res) => {
 
 // shop // products with category
 const allProducts = async (req, res) => {
+  const allCategory = await Category.find().lean();
+
   const allProductsOf = await Product.find().lean();
   if (req.session.userLoggedIn) {
     res.render("shop", {
       user: true,
       userLogged: true,
       allProductsOf,
+      allCategory,
     });
   } else {
-    res.render("shop", { user: true, allProductsOf });
+    res.render("shop", { user: true, allCategory, allProductsOf });
   }
 };
+
+const findProductByCategory = async (req, res) => {
+  const categoryId = req.query.id;
+  const productByCategory = await Category.findById(categoryId);
+  const { categoryName } = productByCategory;
+  const allCategory = await Category.find().lean();
+  const findProductsByCategoryName = await Product.find({
+    category: { $eq: categoryName },
+  }).lean();
+
+  res.render("shop", {
+    user: true,
+    findProductsByCategoryName,
+    products: true,
+    allCategory,
+  });
+};
+
+ 
 
 module.exports = {
   userLogin,
@@ -202,4 +225,5 @@ module.exports = {
   forgotPasswordPost,
   fotpcheck,
   allProducts,
+  findProductByCategory, 
 };
