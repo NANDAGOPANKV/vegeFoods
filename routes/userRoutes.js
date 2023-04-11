@@ -11,7 +11,9 @@ const {
   forgotPassword,
   forgotPasswordPost,
   fotpcheck,
+  allProducts,
 } = require("../controllers/userControeller/userControeller");
+const Product = require("../models/adminSchema/productsSchema");
 
 const userRouter = express();
 
@@ -55,22 +57,27 @@ userRouter.get("/about", (req, res) => {
 });
 
 // shop
-userRouter.get("/shop", (req, res) => {
-  if (req.session.userLoggedIn) {
-    res.render("shop", { user: true, userLogged: true });
-  } else {
-    res.render("shop", { user: true });
-  }
+userRouter.get("/shop", allProducts);
+
+// single Product
+userRouter.get("/product", isUserLoggedIn, async (req, res) => {
+  const productId = req.query.id;
+  const findProduct = await Product.findById(productId);
+  const { name, price, image, stock, description } = findProduct;
+  res.render("singleProduct", {
+    user: true,
+    userLogged: true,
+    name,
+    price,
+    image,
+    stock,
+    description,
+  });
 });
 
 // wishlist
 userRouter.get("/wishlist", isUserLoggedIn, (req, res) => {
   res.render("wishlist", { user: true, userLogged: true });
-});
-
-// single Product
-userRouter.get("/product", isUserLoggedIn, (req, res) => {
-  res.render("singleProduct", { user: true, userLogged: true });
 });
 
 // cart

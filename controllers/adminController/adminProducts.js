@@ -220,6 +220,7 @@ const viewSinglePage = async (req, res) => {
   });
 };
 
+// update Image
 const chengeIMG = async (req, res) => {
   const productId = req.query.id;
   const img = req.files.map((file) => file.filename);

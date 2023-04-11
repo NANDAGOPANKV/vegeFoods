@@ -8,6 +8,9 @@ const { nMailer } = require("../userControeller/nodeMailer");
 // otp generator
 const { otpGen } = require("../../controllers/userControeller/otpController");
 
+// product
+const Product = require("../../models/adminSchema/productsSchema");
+
 // user controller functions
 const userLogin = (req, res) => {
   res.render("signIn", { auth: true });
@@ -18,28 +21,31 @@ const userSignIn = async (req, res) => {
   const { email, password } = req.body;
 
   const findUser = await User.findOne({ email: email });
-  const { bolckUser } = findUser;
-  console.log(bolckUser);
+  if (findUser != null) {
+    const { bolckUser } = findUser;
 
-  if (findUser && bolckUser != true) {
-    const hashPasswordComparison = await bcript.compare(
-      password,
-      findUser.password
-    );
-    if (hashPasswordComparison) {
-      req.session.userLoggedIn = true;
-      req.session.userData = findUser;
-      req.session.userId = findUser._id;
-      res.redirect("/");
+    if (findUser && bolckUser != true) {
+      const hashPasswordComparison = await bcript.compare(
+        password,
+        findUser.password
+      );
+      if (hashPasswordComparison) {
+        req.session.userLoggedIn = true;
+        req.session.userData = findUser;
+        req.session.userId = findUser._id;
+        res.redirect("/");
+      } else {
+        res.render("signIn", { auth: true, incorectEOP: true });
+      }
     } else {
-      res.render("signIn", { auth: true, incorectEOP: true });
+      res.render("signUp", {
+        emailWOU: email,
+        auth: true,
+        adminBlockedUser: bolckUser,
+      });
     }
   } else {
-    res.render("signUp", {
-      emailWOU: email,
-      auth: true,
-      adminBlockedUser: bolckUser,
-    });
+    res.render("signIn", { auth: true, invUsr: true });
   }
 };
 
@@ -172,6 +178,20 @@ const fotpcheck = async (req, res) => {
   res.redirect("/signin");
 };
 
+// shop // products with category
+const allProducts = async (req, res) => {
+  const allProductsOf = await Product.find().lean();
+  if (req.session.userLoggedIn) {
+    res.render("shop", {
+      user: true,
+      userLogged: true,
+      allProductsOf,
+    });
+  } else {
+    res.render("shop", { user: true, allProductsOf });
+  }
+};
+
 module.exports = {
   userLogin,
   userOtp,
@@ -181,4 +201,5 @@ module.exports = {
   forgotPassword,
   forgotPasswordPost,
   fotpcheck,
+  allProducts,
 };
