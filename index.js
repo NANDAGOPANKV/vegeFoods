@@ -14,6 +14,9 @@ const db = require("./db/connection");
 // app
 const app = express();
 
+// dotENV
+require("dotenv").config();
+
 //------------- to connect public folder
 app.use(express.static(path.join(__dirname + "/public")));
 // cors

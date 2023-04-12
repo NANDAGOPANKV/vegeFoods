@@ -12,6 +12,19 @@ const { otpGen } = require("../../controllers/userControeller/otpController");
 const Product = require("../../models/adminSchema/productsSchema");
 const Category = require("../../models/adminSchema/categorySchema");
 
+// all controllers _________________________
+// signup controller
+const signUpController = (req, res) => {
+  console.log(req.body);
+  res.render("signUp", { auth: true });
+};
+
+// signout controller
+const signOutController = (req, res) => {
+  req.session.destroy();
+  res.redirect("/");
+};
+
 // user controller functions
 const userLogin = (req, res) => {
   res.render("signIn", { auth: true });
@@ -19,62 +32,70 @@ const userLogin = (req, res) => {
 
 // sign in
 const userSignIn = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const findUser = await User.findOne({ email: email });
-  if (findUser != null) {
-    const { bolckUser } = findUser;
+    const findUser = await User.findOne({ email: email });
+    if (findUser != null) {
+      const { bolckUser } = findUser;
 
-    if (findUser && bolckUser != true) {
-      const hashPasswordComparison = await bcript.compare(
-        password,
-        findUser.password
-      );
-      if (hashPasswordComparison) {
-        req.session.userLoggedIn = true;
-        req.session.userData = findUser;
-        req.session.userId = findUser._id;
-        res.redirect("/");
+      if (findUser && bolckUser != true) {
+        const hashPasswordComparison = await bcript.compare(
+          password,
+          findUser.password
+        );
+        if (hashPasswordComparison) {
+          req.session.userLoggedIn = true;
+          req.session.userData = findUser;
+          req.session.userId = findUser._id;
+          res.redirect("/");
+        } else {
+          res.render("signIn", { auth: true, incorectEOP: true });
+        }
       } else {
-        res.render("signIn", { auth: true, incorectEOP: true });
+        res.render("signUp", {
+          emailWOU: email,
+          auth: true,
+          adminBlockedUser: bolckUser,
+        });
       }
     } else {
-      res.render("signUp", {
-        emailWOU: email,
-        auth: true,
-        adminBlockedUser: bolckUser,
-      });
+      res.render("signIn", { auth: true, invUsr: true });
     }
-  } else {
-    res.render("signIn", { auth: true, invUsr: true });
+  } catch (error) {
+    res.send(error.message);
   }
 };
 
 // otp verification and submitting the data into database
 const otpDataFunction = async (req, res) => {
-  const { value1, value2, value3, value4 } = req.body;
-  const { name, email, phone, password } = req.session.userInfo;
+  try {
+    const { value1, value2, value3, value4 } = req.body;
+    const { name, email, phone, password } = req.session.userInfo;
 
-  let otpNumber = Number(value1 + value2 + value3 + value4);
+    let otpNumber = Number(value1 + value2 + value3 + value4);
 
-  const otpAuto = Number(req.session.OTP);
+    const otpAuto = Number(req.session.OTP);
 
-  // bcript
-  const hashPassword = await bcript.hash(password, 10);
+    // bcript
+    const hashPassword = await bcript.hash(password, 10);
 
-  const usersDB = new User({
-    name,
-    email,
-    password: hashPassword,
-    phone,
-    bolckUser: false,
-  });
+    const usersDB = new User({
+      name,
+      email,
+      password: hashPassword,
+      phone,
+      bolckUser: false,
+    });
 
-  if (otpAuto === otpNumber) {
-    await usersDB.save();
-    res.redirect("/signin");
-  } else {
-    res.send("Incorrect OTP");
+    if (otpAuto === otpNumber) {
+      await usersDB.save();
+      res.redirect("/signin");
+    } else {
+      res.send("Incorrect OTP");
+    }
+  } catch (error) {
+    res.send(error.message);
   }
 };
 
@@ -102,7 +123,6 @@ const userSignUpChecker = async (req, res) => {
       });
     } else {
       const { email, name, phone, password } = userObj;
-
       const otp = otpGen();
       req.session.userInfo = userObj;
       req.session.OTP = otp;
@@ -129,18 +149,26 @@ let userId;
 let password;
 // forgot password post
 const forgotPasswordPost = async (req, res) => {
-  const { email } = req.body;
-  password = req.body.password;
+  try {
+    const { email } = req.body;
+    password = req.body.password;
 
-  const findUserAvailable = await User.findOne({ email: email });
-  userId = findUserAvailable._id;
+    const findUserAvailable = await User.findOne({ email: email });
+    userId = findUserAvailable._id;
 
-  if (findUserAvailable) {
-    const otp = otpGen();
-    nMailer(email, otp);
-    res.render("otp", { otp: true, forgotP: true, email });
-  } else {
-    res.render("forgotPassword", { userNotExists: true, password, auth: true });
+    if (findUserAvailable) {
+      const otp = otpGen();
+      nMailer(email, otp);
+      res.render("otp", { otp: true, forgotP: true, email });
+    } else {
+      res.render("forgotPassword", {
+        userNotExists: true,
+        password,
+        auth: true,
+      });
+    }
+  } catch (error) {
+    res.send(error.message);
   }
 };
 
@@ -148,72 +176,92 @@ const forgotPasswordPost = async (req, res) => {
 const fotpcheck = async (req, res) => {
   // user id here
 
-  const findOneUser = await User.findById(userId);
+  try {
+    const findOneUser = await User.findById(userId);
 
-  const useDatas = {
-    name: findOneUser?.name,
-    email: findOneUser?.email,
-    phone: findOneUser?.phone,
-    address: findOneUser?.address,
-    wishList: findOneUser?.wishList,
-    createdAt: findOneUser?.createdAt,
-    updatedAt: findOneUser?.updatedAt,
-    password: findOneUser?.password,
-    bolckUser: findOneUser?.bolckUser,
-  };
+    const useDatas = {
+      name: findOneUser?.name,
+      email: findOneUser?.email,
+      phone: findOneUser?.phone,
+      address: findOneUser?.address,
+      wishList: findOneUser?.wishList,
+      createdAt: findOneUser?.createdAt,
+      updatedAt: findOneUser?.updatedAt,
+      password: findOneUser?.password,
+      bolckUser: findOneUser?.bolckUser,
+    };
 
-  const newHashedPassword = await bcript.hash(password, 10);
+    const newHashedPassword = await bcript.hash(password, 10);
 
-  const updateUserPassword = await User.findByIdAndUpdate(userId, {
-    name: useDatas.name,
-    email: useDatas.email,
-    phone: useDatas.phone,
-    address: useDatas.address,
-    wishList: useDatas.wishList,
-    createdAt: useDatas.createdAt,
-    updatedAt: useDatas.updatedAt,
-    password: newHashedPassword,
-    bolckUser: useDatas.bolckUser,
-  });
+    const updateUserPassword = await User.findByIdAndUpdate(userId, {
+      name: useDatas.name,
+      email: useDatas.email,
+      phone: useDatas.phone,
+      address: useDatas.address,
+      wishList: useDatas.wishList,
+      createdAt: useDatas.createdAt,
+      updatedAt: useDatas.updatedAt,
+      password: newHashedPassword,
+      bolckUser: useDatas.bolckUser,
+    });
 
-  res.redirect("/signin");
+    res.redirect("/signin");
+  } catch (error) {
+    res.send(error.message);
+  }
 };
 
 // shop // products with category
 const allProducts = async (req, res) => {
-  const allCategory = await Category.find().lean();
+  try {
+    const allCategory = await Category.find().lean();
 
-  const allProductsOf = await Product.find().lean();
-  if (req.session.userLoggedIn) {
-    res.render("shop", {
-      user: true,
-      userLogged: true,
-      allProductsOf,
-      allCategory,
-    });
-  } else {
-    res.render("shop", { user: true, allCategory, allProductsOf });
+    const allProductsOf = await Product.find().lean();
+    if (req.session.userLoggedIn) {
+      res.render("shop", {
+        user: true,
+        userLogged: true,
+        allProductsOf,
+        allCategory,
+      });
+    } else {
+      res.render("shop", { user: true, allCategory, allProductsOf });
+    }
+  } catch (error) {
+    res.send(error.message);
   }
 };
 
 const findProductByCategory = async (req, res) => {
-  const categoryId = req.query.id;
-  const productByCategory = await Category.findById(categoryId);
-  const { categoryName } = productByCategory;
-  const allCategory = await Category.find().lean();
-  const findProductsByCategoryName = await Product.find({
-    category: { $eq: categoryName },
-  }).lean();
+  try {
+    const categoryId = req.query.id;
 
-  res.render("shop", {
-    user: true,
-    findProductsByCategoryName,
-    products: true,
-    allCategory,
-  });
+    const productByCategory = await Category.findById(categoryId);
+    const { categoryName, categoryStatus } = productByCategory;
+
+    const allCategory = await Category.find().lean();
+    const findProductsByCategoryName = await Product.find({
+      category: { $eq: categoryName },
+    }).lean();
+
+    if (categoryStatus && findProductsByCategoryName != 0) {
+      res.render("shop", {
+        user: true,
+        findProductsByCategoryName,
+        products: true,
+        allCategory,
+      });
+    } else {
+      res.render("shop", {
+        user: true,
+        products: true,
+        unlistedCategory: true,
+      });
+    }
+  } catch (error) {
+    res.send(error.message);
+  }
 };
-
- 
 
 module.exports = {
   userLogin,
@@ -225,5 +273,7 @@ module.exports = {
   forgotPasswordPost,
   fotpcheck,
   allProducts,
-  findProductByCategory, 
+  findProductByCategory,
+  signUpController,
+  signOutController,
 };

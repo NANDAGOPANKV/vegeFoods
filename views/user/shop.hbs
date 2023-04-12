@@ -43,6 +43,10 @@
       </div>
       <div class="row">
 
+        {{#if unlistedCategory}}
+        <p class="text-center w-100">unlisted category OR no products click all</p>
+        {{else}}
+
         {{#if products}}
           {{! product-card }}
           {{#each findProductsByCategoryName}}
@@ -109,7 +113,7 @@
                 <div class="overlay"></div>
               </a>
               <div class="text py-3 pb-4 px-3 text-center">
-                <h3><a href="#">Bell Pepper</a></h3>
+                <h3><a href="#">{{name}}</a></h3>
                 <div class="d-flex">
                   <div class="pricing">
                     <p class="price"><span>&#x20B9;{{price}}</span></p>
@@ -148,6 +152,7 @@
           {{! product-card }}
         {{/each}}
           {{/if}}
+           {{/if}}
       </div>
       <div class="row mt-5">
         <div class="col text-center">

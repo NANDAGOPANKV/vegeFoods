@@ -13,8 +13,25 @@ const {
   fotpcheck,
   allProducts,
   findProductByCategory,
+  signUpController,
+  signOutController,
 } = require("../controllers/userControeller/userControeller");
-const Product = require("../models/adminSchema/productsSchema");
+
+// route controllers
+const {
+  homeController,
+  aboutController,
+  allProductsController,
+  wishlistController,
+  cartController,
+  checkoutController,
+  profileController,
+  contactController,
+} = require("../controllers/userControeller/componentsController/allControllers");
+
+// middlewars
+const { isUserLoggedIn } = require("../middlewares/isUserLogged");
+const { noEntryAfterSignIn } = require("../middlewares/noEntryAfterSignIn");
 
 const userRouter = express();
 
@@ -22,111 +39,38 @@ const userRouter = express();
 userRouter.set("view engine", "hbs");
 userRouter.set("views", "./views/user");
 
-// middlewars
-const isUserLoggedIn = (req, res, next) => {
-  if (req.session.userLoggedIn) {
-    next();
-  } else {
-    res.redirect("/signin");
-  }
-};
-// no entry after sign in
-function noEntryAfterSignIn(req, res, next) {
-  if (req.session.userLoggedIn) {
-    res.redirect("/");
-  } else {
-    next();
-  }
-}
-
 // home
-userRouter.get("/", (req, res) => {
-  if (req.session.userLoggedIn) {
-    res.render("home", { user: true, userLogged: true });
-  } else {
-    res.render("home", { user: true });
-  }
-});
-
+userRouter.get("/", homeController);
 // about
-userRouter.get("/about", (req, res) => {
-  if (req.session.userLoggedIn) {
-    res.render("about", { user: true, userLogged: true });
-  } else {
-    res.render("about", { user: true });
-  }
-});
-
+userRouter.get("/about", aboutController);
 // shop
 userRouter.get("/shop", allProducts);
-
 // list of products by category
 userRouter.get("/categoryProduct", isUserLoggedIn, findProductByCategory);
-
 // single Product
-userRouter.get("/product", isUserLoggedIn, async (req, res) => {
-  const productId = req.query.id;
-  const findProduct = await Product.findById(productId);
-  const { name, price, image, stock, description, cart } = findProduct;
-  res.render("singleProduct", {
-    user: true,
-    userLogged: true,
-    name,
-    price,
-    image,
-    stock,
-    description,
-    cart,
-  });
-});
-
+userRouter.get("/product", isUserLoggedIn, allProductsController);
 // wishlist
-userRouter.get("/wishlist", isUserLoggedIn, (req, res) => {
-  res.render("wishlist", { user: true, userLogged: true });
-});
-
+userRouter.get("/wishlist", isUserLoggedIn, wishlistController);
 // cart
-userRouter.get("/cart", isUserLoggedIn, (req, res) => {
-  res.render("cart", { user: true, userLogged: true });
-});
-
+userRouter.get("/cart", isUserLoggedIn, cartController);
 // checkout
-userRouter.get("/checkout", isUserLoggedIn, (req, res) => {
-  res.render("checkout", { user: true, userLogged: true });
-});
-
+userRouter.get("/checkout", isUserLoggedIn, checkoutController);
 // profile
-userRouter.get("/profile", isUserLoggedIn, (req, res) => {
-  const data = req.session.userData;
-  res.render("profile", { user: true, userLogged: true, data });
-});
-
+userRouter.get("/profile", isUserLoggedIn, profileController);
 // contact
-userRouter.get("/contact", isUserLoggedIn, (req, res) => {
-  res.render("contact", { user: true, userLogged: true });
-});
-
+userRouter.get("/contact", isUserLoggedIn, contactController);
 // otp
 userRouter.get("/otp", noEntryAfterSignIn, userOtp);
-
 // sign In
 userRouter.get("/signin", noEntryAfterSignIn, userLogin);
 userRouter.post("/signin", userSignIn);
 userRouter.post("/otpData", otpDataFunction);
-
 // sign Up
-userRouter.get("/signup", noEntryAfterSignIn, (req, res) => {
-  console.log(req.body);
-  res.render("signUp", { auth: true });
-});
+userRouter.get("/signup", noEntryAfterSignIn, signUpController);
 // sign Up post
 userRouter.post("/signup", userSignUpChecker);
 // sign out
-userRouter.get("/signout", (req, res) => {
-  req.session.destroy();
-  res.redirect("/");
-});
-
+userRouter.get("/signout", signOutController);
 // forgot password
 userRouter.get("/forgotpassword", forgotPassword);
 userRouter.post("/forgotpassword", forgotPasswordPost);
