@@ -23,7 +23,7 @@ const productSchema = new mongoose.Schema({
   },
   discoutPrice: {
     type: Number,
-    required: false,
+    required: true,
   },
   Status: {
     type: Boolean,

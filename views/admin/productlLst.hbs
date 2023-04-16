@@ -77,6 +77,7 @@
                                             <th scope="col">image</th>
                                             <th scope="col">name</th> 
                                             <th scope="col">price</th>
+                                            <th scope="col">discount</th>
                                             <th scope="col">category</th>
                                             <th scope="col">stock</th>
                                             <th scope="col">status</th>
@@ -91,6 +92,11 @@
                                             <td><a href="/viewsignproduct?id={{_id}}"><img class="rounded" src="/productImage/{{image.[0]}}" style="width: 75px; height: 75px; object-fit: fill;" alt="nop"></a></td> 
                                             <td>{{name}}</td>
                                             <td>{{price}}</td>
+                                            {{#if discoutPrice}}
+                                            <td class="text-success" >{{discoutPrice}}</td>
+                                            {{else}}
+                                            <td class="text-danger" >{{discoutPrice}}</td>
+                                            {{/if}}
                                             <td>{{category}}</td>
                                             <td>{{stock}}</td>
                                             {{#if Status}}

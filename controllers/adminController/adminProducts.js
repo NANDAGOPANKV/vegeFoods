@@ -37,6 +37,7 @@ const addProducts = async (req, res) => {
     stock: req.body.stock,
     image: img,
     category: req.body.category,
+    discoutPrice: req.body.discount,
   };
 
   const productAdded = new Product({
@@ -45,7 +46,7 @@ const addProducts = async (req, res) => {
     description: productObj.description,
     stock: productObj.stock,
     image: productObj.image,
-    discoutPrice: 0,
+    discoutPrice: productObj.discoutPrice,
     Status: true,
     category: productObj.category,
   });
@@ -127,7 +128,16 @@ const updateItem = async (req, res) => {
   // categorye here
   const categoryObj = await Category.find().lean();
 
-  const { name, price, description, stock, _id, category, image } = findOne;
+  const {
+    name,
+    price,
+    description,
+    stock,
+    _id,
+    category,
+    image,
+    discoutPrice,
+  } = findOne;
   const [img1, img2, img3] = image;
 
   res.render("updateProduct", {
@@ -140,6 +150,7 @@ const updateItem = async (req, res) => {
     _id,
     categoryObj,
     category,
+    discoutPrice,
     img1,
     img2,
     img3,
@@ -156,6 +167,7 @@ const updateItemPost = async (req, res) => {
     description: req.body.description,
     stock: req.body.stock,
     category: req.body.category,
+    discount: req.body.discount,
   };
 
   const updateProductById = await Product.findByIdAndUpdate(productId, {
@@ -164,6 +176,7 @@ const updateItemPost = async (req, res) => {
     category: updatedField.category,
     stock: updatedField.stock,
     description: updatedField.description,
+    discoutPrice: updatedField.discount,
   })
     .then(() => {
       res.redirect("/productlist");

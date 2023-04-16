@@ -214,9 +214,12 @@ const fotpcheck = async (req, res) => {
 // shop // products with category
 const allProducts = async (req, res) => {
   try {
-    const allCategory = await Category.find().lean();
+    const allCategory = await Category.find({
+      categoryStatus: true,
+    }).lean();
 
-    const allProductsOf = await Product.find().lean();
+    const allProductsOf = await Product.find({ Status: true }).lean();
+
     if (req.session.userLoggedIn) {
       res.render("shop", {
         user: true,
@@ -232,6 +235,7 @@ const allProducts = async (req, res) => {
   }
 };
 
+// find products by category
 const findProductByCategory = async (req, res) => {
   try {
     const categoryId = req.query.id;
@@ -239,9 +243,10 @@ const findProductByCategory = async (req, res) => {
     const productByCategory = await Category.findById(categoryId);
     const { categoryName, categoryStatus } = productByCategory;
 
-    const allCategory = await Category.find().lean();
+    const allCategory = await Category.find({ categoryStatus: true }).lean();
     const findProductsByCategoryName = await Product.find({
       category: { $eq: categoryName },
+      Status: true,
     }).lean();
 
     if (categoryStatus && findProductsByCategoryName != 0) {

@@ -190,12 +190,10 @@ const orderList = (req, res) => {
 // add product controller
 const addProductController = async (req, res) => {
   try {
-    const name = nameOfAdmin();
     const categorysName = await Category.find().lean();
     res.render("addProducts", {
       admin: true,
       admindash: true,
-      name,
       categorysName,
     });
   } catch (error) {

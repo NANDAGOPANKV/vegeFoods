@@ -2,7 +2,7 @@ const multer = require("multer");
 const path = require("path");
 
 // multer to upload images
-const storeage = multer.diskStorage({
+const storeageFunc = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "../public/productImage"));
   },
@@ -12,4 +12,4 @@ const storeage = multer.diskStorage({
   },
 });
 
-module.exports = { storeage };
+module.exports = { storeageFunc };

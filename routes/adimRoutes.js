@@ -1,4 +1,7 @@
+const multer = require("multer");
 const express = require("express");
+// route base
+const adminRoute = express();
 
 const {
   findAllUsers,
@@ -30,22 +33,15 @@ const {
   chengeIMG,
 } = require("../controllers/adminController/adminProducts");
 
-const multer = require("multer");
-
-// multer import
-const storeage = require("../controllers/userControeller/componentsController/multer");
-
 // signin/auth controllers
 const {
   isAdminLoggedIn,
   noEntryAfterSignIn,
 } = require("../controllers/adminController/loginControllers/allControllers");
+const { storeageFunc } = require("../middlewares/multer");
 
 // multer
-const upload = multer({ storage: storeage });
-
-// route base
-const adminRoute = express();
+const upload = multer({ storage: storeageFunc });
 // view engine setup
 adminRoute.set("view engine", "hbs");
 adminRoute.set("views", "./views/admin");
