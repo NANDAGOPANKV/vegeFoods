@@ -28,17 +28,38 @@ const allProductsController = async (req, res) => {
     const productId = req.query.id;
     const findProduct = await Product.findById(productId);
     const { name, price, image, stock, description, cart, _id } = findProduct;
-    res.render("singleProduct", {
-      user: true,
-      userLogged: true,
-      name,
-      price,
-      image,
-      stock,
-      description,
-      cart,
-      _id,
-    });
+
+    // check the product already exist in wishlist
+    const userDataSession = req.session.userData;
+    const userData = await User.findById(userDataSession._id);
+    const userId = userData._id;
+    const wishListData = await wishList.findOne({ user: userId }).lean();
+
+    if (wishListData) {
+      res.render("singleProduct", {
+        user: true,
+        userLogged: true,
+        name,
+        price,
+        image,
+        stock,
+        description,
+        cart,
+        _id,
+      });
+    } else {
+      res.render("singleProduct", {
+        user: true,
+        userLogged: true,
+        name,
+        price,
+        image,
+        stock,
+        description,
+        cart,
+        _id,
+      });
+    }
   } catch (error) {
     res.send(error.message);
   }
@@ -108,10 +129,6 @@ const wishlistController = async (req, res) => {
         );
 
         if (productExist >= 0) {
-          const alreadyInWishlist = await wishList.findOne({
-            user: userId,
-            "product.productId": productId,
-          });
           res.send("product already in wishlist");
         } else {
           // more product
@@ -274,24 +291,33 @@ const cartAll = async (req, res) => {
         .populate("product.productId")
         .lean();
       // all products
-      const products = findCart?.product;
+      let products = findCart?.product;
       if (products?.length > 0) {
         const subPrice = findCart.product.reduce(
           (acc, curr) => (acc += curr.totalPrice),
           0
         );
 
+        let uid = findCart?.user;
+
+        products.map((d) => {
+          return d.quantity;
+        });
+        
+
         const discount = 0;
         const deliveryCharge = 35;
         const grandTotal = subPrice + discount + deliveryCharge;
         res.render("cart", {
           user: true,
+          ajax: true,
           userLogged: true,
           products,
           discount,
           deliveryCharge,
           grandTotal,
           subPrice,
+          uid,
         });
       } else {
         res.render("wishlist", {
@@ -323,6 +349,63 @@ const removeItemFromCart = async (req, res) => {
   ).lean();
 
   res.redirect("/cart");
+};
+
+// decriment controller
+const decrement = async (req, res) => {
+  const pId = req.query.id;
+  const uData = req.session.userData;
+  const uId = uData?._id;
+  try {
+    const product = await Product.findOne({ _id: pId }).lean();
+
+    let price = product?.price;
+    let stock = product?.stock;
+
+    const cart = await Cart.findOneAndUpdate(
+      { user: uId, "product.productId": pId },
+      { $inc: { "product.$.quantity": -1, "product.$.totalPrice": -price } },
+      { new: true }
+    );
+
+    // update stock field
+    const allProduct = await Product.findByIdAndUpdate(
+      { _id: pId },
+      { $set: { stock: stock + 1 } }
+    );
+    res.redirect("/cart");
+  } catch (error) {
+    res.send(error.message);
+  }
+};
+
+// decriment controller
+const increment = async (req, res) => {
+  const pId = req.query.id;
+  const uData = req.session.userData;
+  const uId = uData?._id;
+  try {
+    const product = await Product.findOne({ _id: pId }).lean();
+
+    let price = product?.price;
+    let stock = product?.stock;
+
+    const cart = await Cart.findOneAndUpdate(
+      { user: uId, "product.productId": pId },
+      { $inc: { "product.$.quantity": 1, "product.$.totalPrice": price } },
+      { new: true }
+    );
+
+    // update stock field
+    const allProduct = await Product.findByIdAndUpdate(
+      { _id: pId },
+      { $set: { stock: stock - 1 } }
+    );
+
+    res.redirect("/cart");
+  } catch (error) {
+    res.send(error.message);
+  }
 };
 
 // checkout controller
@@ -358,4 +441,6 @@ module.exports = {
   removeItemFromCart,
   wishlist,
   removeitemwishlist,
+  decrement,
+  increment,
 };

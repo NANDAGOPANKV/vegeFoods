@@ -1,3 +1,4 @@
+ 
 <div class="goto-here">
 
   <div
@@ -60,22 +61,20 @@
                         <h3>{{productId.name}}</h3>
                         <p>{{productId.description}}</p>
                       </td>
-
                       <td class="price">&#x20B9;{{price}}</td>
-
-                      <td class="quantity">
+                       <td class="quantity">
                         <div class="input-group mb-3">
+                        <button onclick="location.href='/pdecriment?id={{productId._id}}'" class="btn btn-primary p-2" >-</button>
                           <input
-                            type="text"
-                            name="quantity"
+                            type="number"
+                            name="quantity" 
                             class="quantity form-control input-number"
-                            value="{{quantity}}"
+                            value="{{quantity}}" 
                             min="1"
-                            max="100"
                           />
-                        </div>
+                        <button onclick="location.href='/pincrement?id={{productId._id}}'" class="btn btn-primary p-2">+</button>
+                        </div> 
                       </td>
-
                       <td class="total">&#x20B9;{{totalPrice}}</td>
                     </tr><!-- END TR-->
                   {{/each}}

@@ -30,15 +30,13 @@ const {
   removeItemFromCart,
   wishlist,
   removeitemwishlist,
+  decrement,
+  increment,
 } = require("../controllers/userControeller/componentsController/allControllers");
 
 // middlewars
 const { isUserLoggedIn } = require("../middlewares/isUserLogged");
 const { noEntryAfterSignIn } = require("../middlewares/noEntryAfterSignIn");
-
-// cart
-const Cart = require("../models/adminSchema/addToCartSchema");
-const User = require("../models/userSchema/usersSchema");
 
 const userRouter = express();
 
@@ -64,6 +62,10 @@ userRouter.get("/removeitemwishlist", isUserLoggedIn, removeitemwishlist);
 userRouter.get("/cartp", isUserLoggedIn, cartController);
 // show cart items
 userRouter.get("/cart", isUserLoggedIn, cartAll);
+// decrement
+userRouter.get("/pdecriment", decrement);
+// increment
+userRouter.get("/pincrement", increment);
 // remove one item from cart
 userRouter.get("/removeitemcart", removeItemFromCart);
 // checkout

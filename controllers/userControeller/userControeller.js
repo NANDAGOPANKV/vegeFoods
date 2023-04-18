@@ -213,12 +213,20 @@ const fotpcheck = async (req, res) => {
 
 // shop // products with category
 const allProducts = async (req, res) => {
+  const pageNo = req.query.page;
+  const perPage = 4;
+  
   try {
     const allCategory = await Category.find({
       categoryStatus: true,
     }).lean();
 
-    const allProductsOf = await Product.find({ Status: true }).lean();
+    const docCount = await Product.find({ Status: true });
+
+    const allProductsOf = await Product.find({ Status: true })
+      .skip((pageNo - 1) * perPage)
+      .limit(perPage)
+      .lean();
 
     if (req.session.userLoggedIn) {
       res.render("shop", {
@@ -226,6 +234,8 @@ const allProducts = async (req, res) => {
         userLogged: true,
         allProductsOf,
         allCategory,
+        pageNo,
+        docCount: docCount?.length,
       });
     } else {
       res.render("shop", { user: true, allCategory, allProductsOf });
