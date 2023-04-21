@@ -33,33 +33,19 @@ const allProductsController = async (req, res) => {
     const userDataSession = req.session.userData;
     const userData = await User.findById(userDataSession._id);
     const userId = userData._id;
-    const wishListData = await wishList.findOne({ user: userId }).lean();
 
-    if (wishListData) {
-      res.render("singleProduct", {
-        user: true,
-        userLogged: true,
-        name,
-        price,
-        image,
-        stock,
-        description,
-        cart,
-        _id,
-      });
-    } else {
-      res.render("singleProduct", {
-        user: true,
-        userLogged: true,
-        name,
-        price,
-        image,
-        stock,
-        description,
-        cart,
-        _id,
-      });
-    }
+    res.render("singleProduct", {
+      ajax: true,
+      user: true,
+      userLogged: true,
+      name,
+      price,
+      image,
+      stock,
+      description,
+      cart,
+      _id,
+    });
   } catch (error) {
     res.send(error.message);
   }
@@ -88,12 +74,14 @@ const wishlist = async (req, res) => {
             userLogged: true,
             products,
             emptWishlist: false,
+            ajax: true,
           });
         } else {
           res.render("wishlist", {
             user: true,
             userLogged: true,
             emptWishlist: true,
+            ajax: true,
           });
         }
       } else {
@@ -101,6 +89,7 @@ const wishlist = async (req, res) => {
           user: true,
           userLogged: true,
           emptWishlist: true,
+          ajax: true,
         });
       }
     } else {
@@ -116,7 +105,7 @@ const wishlistController = async (req, res) => {
   try {
     if (req.session.userData) {
       const userDataSession = req.session.userData;
-      const productId = req.query.id;
+      const productId = req.body.id;
       const userId = userDataSession._id;
 
       // get data from db
@@ -129,7 +118,7 @@ const wishlistController = async (req, res) => {
         );
 
         if (productExist >= 0) {
-          res.send("product already in wishlist");
+          res.json({ pExists: "product already in wishlist" });
         } else {
           // more product
 
@@ -149,7 +138,7 @@ const wishlistController = async (req, res) => {
               }
             )
             .then(() => {
-              res.send("product added to wishlist");
+              res.json({ productOneTime: "product added to wishlist" });
             });
         }
       } else {
@@ -181,17 +170,34 @@ const wishlistController = async (req, res) => {
 
 // remove item from wishlist
 const removeitemwishlist = async (req, res) => {
-  const pId = req.query.id;
-  const userId = req.session.userData;
-  const uId = userId._id;
+  // Check if user is logged in
+  if (!req.session.userData) {
+    return res.status(401).send("Unauthorized");
+  }
 
-  const removeItem = await wishList.findOneAndUpdate(
-    {},
+  // Get user ID from session
+  const userId = req.session.userData._id;
+
+  // Get product ID from query string
+  const pId = req.body.id;
+
+  // Find wishlist item for user and product
+  const wishlistItem = await wishList.findOne({
+    user: userId,
+    "product.productId": pId,
+  });
+  // If wishlist item not found, return error
+  if (!wishlistItem) {
+    return res.status(404).send("Not found");
+  }
+  // Remove product from wishlist item
+  const updatedWishlist = await wishList.findOneAndUpdate(
+    { user: userId, "product.productId": pId },
     { $pull: { product: { productId: pId } } },
     { new: true }
   );
-
-  res.redirect("/wishlist");
+  // Redirect to wishlist page
+  res.json({ message: "Item Removed From Wishlist" });
 };
 
 // cart controller add to cart
@@ -199,63 +205,96 @@ const cartController = async (req, res) => {
   try {
     if (req.session.userData) {
       const userDataSession = req.session.userData;
-      const productId = req.query.id;
-
+      const productId = req.body.id;
       const userId = userDataSession._id;
       const userData = await User.findById(userId);
       const productData = await Product.findById(productId);
       const userCart = await Cart.findOne({ user: userId });
 
-      //if user cart available
-      if (userCart) {
-        const productExistIndex = userCart.product.findIndex(
-          (product) => product.productId == productId
-        );
+      const cartData = await Cart.findOne({ user: userId })
+        .populate("product.productId")
+        .lean();
 
-        if (productExistIndex >= 0) {
-          await Cart.findOneAndUpdate(
-            { user: userId, "product.productId": productId },
-            { $inc: { "product.$.quantity": 1 } }
-          )
-            .then((value) => {
-              // product added to the cart again
-              res.json({ message: "product add again" });
-            })
-            .catch((err) => {
-              res.send(err.message);
-            });
+      if (cartData && cartData.product) {
+        const findQuantity = cartData.product.find((value) => {
+          return value.productId._id == productId;
+        });
 
-          const findcart = await Cart.findOne({
-            user: userId,
-            "product.productId": productId,
-          });
-          const find = findcart.product.find((value) => {
-            return value.productId == productId;
-          });
-
-          await Cart.findOneAndUpdate(
-            { user: userId, "product.productId": productId },
-            { $set: { "product.$.totalPrice": find.quantity * find.price } }
-          ).then((value) => {
-            console.log(value, "--out put--");
-          });
-        } else {
-          await Cart.findOneAndUpdate(
-            { user: userId },
-            {
-              $push: {
-                product: {
-                  productId: productId,
-                  price: productData.price,
-                  totalPrice: productData.price,
-                  discoutPrice: productData.discoutPrice,
-                },
-              },
-            }
+        //if user cart available
+        if (userCart) {
+          const productExistIndex = userCart.product.findIndex(
+            (product) => product.productId == productId
           );
-          res.send("product added to the cart");
+
+          if (productExistIndex >= 0) {
+            if (
+              productData.stock == findQuantity.quantity ||
+              productData.stock < findQuantity.quantity
+            ) {
+              res.json({
+                dsc: `Sorry We Only Have ${productData?.stock} Stock's`,
+              });
+            } else {
+              await Cart.findOneAndUpdate(
+                { user: userId, "product.productId": productId },
+                { $inc: { "product.$.quantity": 1 } }
+              );
+
+              // product added to the cart again
+
+              const findcart = await Cart.findOne({
+                user: userId,
+                "product.productId": productId,
+              });
+              const find = findcart.product.find((value) => {
+                return value.productId == productId;
+              });
+
+              await Cart.findOneAndUpdate(
+                { user: userId, "product.productId": productId },
+                { $set: { "product.$.totalPrice": find.quantity * find.price } }
+              ).then((value) => {
+                console.log("--out put--");
+              });
+              res.json({ dsc: "product added again" });
+            }
+          } else {
+            await Cart.findOneAndUpdate(
+              { user: userId },
+              {
+                $push: {
+                  product: {
+                    productId: productId,
+                    price: productData.price,
+                    totalPrice: productData.price,
+                    discoutPrice: productData.discoutPrice,
+                  },
+                },
+              }
+            );
+            res.json({ pAA: "product succesfully added to the cart" });
+          }
+        } else {
+          console.log("here");
+          const data = new Cart({
+            user: userId,
+            product: [
+              {
+                productId: productId,
+                price: productData.price,
+                totalPrice: productData.price,
+                discoutPrice: productData.discoutPrice,
+              },
+            ],
+          });
+
+          await data.save();
+          res.render("cart", {
+            user: true,
+          });
         }
       } else {
+        console.log("here");
         const data = new Cart({
           user: userId,
           product: [
@@ -272,6 +311,7 @@ const cartController = async (req, res) => {
         res.render("cart", {
           user: true,
         });
+        // res.json({ failed: "Cart data not found" });
       }
     } else {
       res.json({ failed: "signup please" });
@@ -292,6 +332,7 @@ const cartAll = async (req, res) => {
         .lean();
       // all products
       let products = findCart?.product;
+      let Stock = Product.find().lean();
       if (products?.length > 0) {
         const subPrice = findCart.product.reduce(
           (acc, curr) => (acc += curr.totalPrice),
@@ -303,11 +344,11 @@ const cartAll = async (req, res) => {
         products.map((d) => {
           return d.quantity;
         });
-        
 
         const discount = 0;
         const deliveryCharge = 35;
         const grandTotal = subPrice + discount + deliveryCharge;
+
         res.render("cart", {
           user: true,
           ajax: true,
@@ -318,6 +359,7 @@ const cartAll = async (req, res) => {
           grandTotal,
           subPrice,
           uid,
+          Stock,
         });
       } else {
         res.render("wishlist", {
@@ -337,43 +379,66 @@ const cartAll = async (req, res) => {
 
 // remove item from cart
 const removeItemFromCart = async (req, res) => {
-  const pId = req.query.id;
-
+  const pId = req.body.id;
+  console.log("yes", pId);
   const userID = req.session.userData;
   const uId = userID._id;
 
-  const removeItem = await Cart.findOneAndUpdate(
-    {},
+  const cartItem = await Cart.findOne({
+    user: uId,
+    "product.productId": pId,
+  });
+
+  if (!cartItem) {
+    return res.status(404).send("Not Found");
+  }
+
+  const updateCart = await Cart.findOneAndUpdate(
+    { user: uId, "product.productId": pId },
     { $pull: { product: { productId: pId } } },
     { new: true }
-  ).lean();
+  );
 
-  res.redirect("/cart");
+  res.json({ message: "Item Removed From Cart" });
 };
 
 // decriment controller
 const decrement = async (req, res) => {
-  const pId = req.query.id;
+  const pId = req.body.id;
   const uData = req.session.userData;
   const uId = uData?._id;
   try {
     const product = await Product.findOne({ _id: pId }).lean();
+    const cartData = await Cart.findOne({ user: uId })
+      .populate("product.productId")
+      .lean();
+
+    const findQuantity = cartData.product.find((value) => {
+      console.log(value.productId._id);
+      return value.productId._id == pId;
+    });
+
+    const allPrice = cartData.product.reduce((val, val2) => {
+      return (val += val2.totalPrice);
+    }, 0);
+
+    const discount = 0;
+    const deliveryCharge = 35;
+    const grandTotal = allPrice + discount + deliveryCharge;
 
     let price = product?.price;
     let stock = product?.stock;
-
-    const cart = await Cart.findOneAndUpdate(
-      { user: uId, "product.productId": pId },
-      { $inc: { "product.$.quantity": -1, "product.$.totalPrice": -price } },
-      { new: true }
-    );
-
-    // update stock field
-    const allProduct = await Product.findByIdAndUpdate(
-      { _id: pId },
-      { $set: { stock: stock + 1 } }
-    );
-    res.redirect("/cart");
+    if (findQuantity.quantity == 1) {
+      console.log("WORKING THE PRODUCT IS 1");
+      res.json({ findQuantity, allPrice, grandTotal });
+    } else {
+      const cart = await Cart.findOneAndUpdate(
+        { user: uId, "product.productId": pId },
+        { $inc: { "product.$.quantity": -1, "product.$.totalPrice": -price } },
+        { new: true }
+      );
+      res.json({ findQuantity, stock, allPrice, grandTotal });
+    }
   } catch (error) {
     res.send(error.message);
   }
@@ -381,28 +446,43 @@ const decrement = async (req, res) => {
 
 // decriment controller
 const increment = async (req, res) => {
-  const pId = req.query.id;
+  const pId = req.body.id;
   const uData = req.session.userData;
   const uId = uData?._id;
   try {
     const product = await Product.findOne({ _id: pId }).lean();
 
     let price = product?.price;
-    let stock = product?.stock;
+    const cartData = await Cart.findOne({ user: uId })
+      .populate("product.productId")
+      .lean();
 
-    const cart = await Cart.findOneAndUpdate(
-      { user: uId, "product.productId": pId },
-      { $inc: { "product.$.quantity": 1, "product.$.totalPrice": price } },
-      { new: true }
-    );
+    const findQuantity = cartData.product.find((value) => {
+      return value.productId._id == pId;
+    });
+    const Products = await Product.findOne({ _id: pId });
 
-    // update stock field
-    const allProduct = await Product.findByIdAndUpdate(
-      { _id: pId },
-      { $set: { stock: stock - 1 } }
-    );
+    const allPrice = cartData.product.reduce((val, val2) => {
+      return (val += val2.totalPrice);
+    }, 0);
 
-    res.redirect("/cart");
+    const discount = 0;
+    const deliveryCharge = 35;
+    const grandTotal = allPrice + discount + deliveryCharge;
+
+    if (Products.stock == findQuantity.quantity) {
+      res.json({ findQuantity, Products, allPrice, grandTotal });
+    } else {
+      const cart = await Cart.findOneAndUpdate(
+        { user: uId, "product.productId": pId },
+        { $inc: { "product.$.quantity": 1, "product.$.totalPrice": price } },
+        { new: true }
+      );
+
+      // update stock field
+
+      res.json({ findQuantity, Products, allPrice, grandTotal });
+    }
   } catch (error) {
     res.send(error.message);
   }
@@ -411,16 +491,6 @@ const increment = async (req, res) => {
 // checkout controller
 const checkoutController = (req, res) => {
   res.render("checkout", { user: true, userLogged: true });
-};
-
-// profile controller
-const profileController = async (req, res) => {
-  const user = req.session.userData;
-  const uId = user._id;
-  // get the user
-  const userData = await User.findById(uId);
-  const { name, email, phone } = userData;
-  res.render("profile", { user: true, userLogged: true, name, email, phone });
 };
 
 // contact controller
@@ -435,7 +505,6 @@ module.exports = {
   wishlistController,
   cartController,
   checkoutController,
-  profileController,
   contactController,
   cartAll,
   removeItemFromCart,

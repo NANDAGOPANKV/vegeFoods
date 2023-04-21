@@ -71,9 +71,10 @@
                 </thead>
                 <tbody>
                   {{#each products}}
-                    <tr class="text-center">
+                    <tr class="text-center" id="{{productId._id}}">
                       <td class="product-remove"><a
-                          href="/removeitemwishlist?id={{productId._id}}"
+                      onclick="itemsRemoveFunc('{{productId._id}}')"
+                          {{!-- href="/removeitemwishlist?id={{productId._id}}" --}}
                         ><span class="ion-ios-close"></span></a></td>
 
                       <td class="image-prod"><div><img
@@ -89,14 +90,13 @@
 
                       <td class="price">&#x20B9;{{productId.price}}</td>
 
-                      <td class="quantity">
-
+                      <td class="quantity"> 
                         <p><a
-                            href="/cartp?id={{productId._id}}"
-                            class="btn btn-primary"
+                           onclick="addToCart('{{productId._id}}')"
+                            class="btn btn-primary text-white"
                           >Add To Cart</a></p>
+                          
                       </td>
-
                     </tr><!-- END TR-->
                   {{/each}}
                 </tbody>
@@ -250,16 +250,65 @@
         stroke="#F96D00"
       ></circle></svg></div>
 
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
   <script>
-    $(document).ready(function(){ var quantitiy=0;
-    $('.quantity-right-plus').click(function(e){ // Stop acting like a button
-    e.preventDefault(); // Get the field name var quantity =
-    parseInt($('#quantity').val()); // If is not undefined
-    $('#quantity').val(quantity + 1); // Increment });
-    $('.quantity-left-minus').click(function(e){ // Stop acting like a button
-    e.preventDefault(); // Get the field name var quantity =
-    parseInt($('#quantity').val()); // If is not undefined // Increment
-    if(quantity>0){ $('#quantity').val(quantity - 1); } }); });
+
+// item remove 
+ const itemsRemoveFunc = function(id){
+  console.log(id);
+  $.ajax({
+    url: "/removeitemwishlist",
+    method: "post",
+    data: {
+      id: id
+    }
+  }).done((val) => {
+    console.log(val);
+    // Remove the corresponding element from the DOM
+    $(`#${id}`).remove();
+    // Display the success message
+    Swal.fire({
+      position: 'top-end',
+      icon: 'success',
+      title: val.message,
+      showConfirmButton: false,
+      timer: 1750
+    });
+  });
+}
+
+
+    const addToCart = function(id){
+  console.log("yes")
+  $.ajax({
+    url:"/cartp",
+    method: "post",
+    data:{
+      id:id
+    }
+  }).done((val)=>{
+    console.log(val)
+    if(val.pAA){
+    Swal.fire({
+    position: 'top-end',
+    icon: 'success',
+    title: val.pAA,
+    showConfirmButton: false,
+    timer: 1750
+  })
+  }else{
+    Swal.fire({
+    position: 'top-end',
+    icon: 'info',
+    title: val.dsc,
+    showConfirmButton: false,
+    timer: 1750
+  })
+  }
+  })
+  }
   </script>
 
 </div>

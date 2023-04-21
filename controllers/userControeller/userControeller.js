@@ -11,6 +11,7 @@ const { otpGen } = require("../../controllers/userControeller/otpController");
 // product
 const Product = require("../../models/adminSchema/productsSchema");
 const Category = require("../../models/adminSchema/categorySchema");
+const wishList = require("../../models/adminSchema/wishList");
 
 // all controllers _________________________
 // signup controller
@@ -214,14 +215,17 @@ const fotpcheck = async (req, res) => {
 // shop // products with category
 const allProducts = async (req, res) => {
   const pageNo = req.query.page;
+  const userDataSession = req.session.userData;
+  const uId = userDataSession?._id;
+  // console.log(userDataSession);
   const perPage = 4;
-  
+
   try {
     const allCategory = await Category.find({
       categoryStatus: true,
     }).lean();
 
-    const docCount = await Product.find({ Status: true });
+    const docCount = await Product.find({ Status: true }).countDocuments();
 
     const allProductsOf = await Product.find({ Status: true })
       .skip((pageNo - 1) * perPage)
@@ -238,7 +242,11 @@ const allProducts = async (req, res) => {
         docCount: docCount?.length,
       });
     } else {
-      res.render("shop", { user: true, allCategory, allProductsOf });
+      res.render("shop", {
+        user: true,
+        allCategory,
+        allProductsOf,
+      });
     }
   } catch (error) {
     res.send(error.message);
@@ -265,12 +273,14 @@ const findProductByCategory = async (req, res) => {
         findProductsByCategoryName,
         products: true,
         allCategory,
+        ajax: true,
       });
     } else {
       res.render("shop", {
         user: true,
         products: true,
         unlistedCategory: true,
+        ajax: true,
       });
     }
   } catch (error) {

@@ -26,10 +26,11 @@
         <div class="col-lg-6 mb-5 ftco-animate">
           <a href="productImage/{{image.[0]}}" class="image-popup"><img
               src="productImage/{{image.[0]}}"
-              class="img-fluid"
+              class="img-fluid rounded"
               alt="Colorlib Template"
             /></a>
         </div>
+        
         <div class="col-lg-6 product-details pl-md-5 ftco-animate">
           <h3 class="text-capitalize">{{name}}</h3>
           <div class="rating d-flex">
@@ -53,25 +54,89 @@
           <p class="price"><span>MRP: &#x20B9;{{price}}</span></p>
           <p class="text-capitalize">{{description}}
           </p>
-          <div class="row mt-4">
-          
-               
-          <div class="d-flex mr-2">
-            <p class="m-2"><a
-                href="/cartp?id={{_id}}"
-                class="btn btn-black py-3 px-5"
-              >Add to Cart</a></p>
-            
-              <p class="m-2" ><a
-                  href="/addwishlist?id={{_id}}"
-                  class="btn btn-black py-3 px-5"
-                >Add to Wishlist</a></p>
-            
-          </div>
-        </div>
+    <div class="row mt-4">
+  <div class="d-flex mr-2">
+    <p class="m-2">
+      <a onclick="addToCartDirect('{{_id}}')" class="btn btn-black py-3 px-5">Add to Cart</a>
+    </p>
+    <p class="m-2">
+      <a onclick="addToWishlistDirect('{{_id}}')" class="btn btn-black py-3 px-5">Add to Wishlist</a>
+    </p>
+  </div>
+</div>
       </div>
     </div>
   </section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  // add to cart
+  const addToCartDirect = function(id) {
+    $.ajax({
+      url: "/cartp",
+      method: "post",
+      data: {
+        id: id
+      }
+    }).done(function(val) {
+      console.log(val)
+      if(val.dsc){
+        Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title:val?.dsc,
+        showConfirmButton: false,
+        timer: 1500
+    })
+    }else{
+        Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title:val?.pAA,
+        showConfirmButton: false,
+        timer: 1500
+    })
+    }
+    })
+  }
+
+  // add to wishlist
+  const addToWishlistDirect = function(id) {
+    console.log('-----dfasdf-------')
+    $.ajax({
+      url: "/addwishlist",
+      method: "post",
+      data: {
+        id: id
+      }
+    }).done(function(val) { 
+
+  if(val?.pExists){
+  Swal.fire({
+  position: 'top-end',
+  icon: 'success',
+  title:val?.pExists,
+  showConfirmButton: false,
+  timer: 1500
+  })
+
+  }else{
+     Swal.fire({
+  position: 'top-end',
+  icon: 'success',
+  title:"product added",
+  showConfirmButton: false,
+  timer: 1500
+  })
+  }
+
+    })
+  }
+</script>
+
+
+
 
   <section class="ftco-section">
     <div class="container">
@@ -418,16 +483,8 @@
   <script src="js/google-map.js"></script>
   <script src="js/main.js"></script>
 
-  <script>
-    $(document).ready(function(){ var quantitiy=0;
-    $('.quantity-right-plus').click(function(e){ // Stop acting like a button
-    e.preventDefault(); // Get the field name var quantity =
-    parseInt($('#quantity').val()); // If is not undefined
-    $('#quantity').val(quantity + 1); // Increment });
-    $('.quantity-left-minus').click(function(e){ // Stop acting like a button
-    e.preventDefault(); // Get the field name var quantity =
-    parseInt($('#quantity').val()); // If is not undefined // Increment
-    if(quantity>0){ $('#quantity').val(quantity - 1); } }); });
-  </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      
+ 
 
 </div>

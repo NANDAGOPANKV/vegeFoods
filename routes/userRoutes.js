@@ -24,7 +24,6 @@ const {
   wishlistController,
   cartController,
   checkoutController,
-  profileController,
   contactController,
   cartAll,
   removeItemFromCart,
@@ -37,6 +36,10 @@ const {
 // middlewars
 const { isUserLoggedIn } = require("../middlewares/isUserLogged");
 const { noEntryAfterSignIn } = require("../middlewares/noEntryAfterSignIn");
+const {
+  editor,
+  profileController,
+} = require("../controllers/userControeller/profileController");
 
 const userRouter = express();
 
@@ -55,23 +58,25 @@ userRouter.get("/categoryProduct", isUserLoggedIn, findProductByCategory);
 userRouter.get("/product", isUserLoggedIn, allProductsController);
 // wishlist
 userRouter.get("/wishlist", isUserLoggedIn, wishlist);
-userRouter.get("/addwishlist", isUserLoggedIn, wishlistController);
-userRouter.get("/removeitemwishlist", isUserLoggedIn, removeitemwishlist);
+userRouter.post("/addwishlist", isUserLoggedIn, wishlistController);
+userRouter.post("/removeitemwishlist", isUserLoggedIn, removeitemwishlist);
 // cart
 // add to cart
-userRouter.get("/cartp", isUserLoggedIn, cartController);
+userRouter.post("/cartp", isUserLoggedIn, cartController);
 // show cart items
 userRouter.get("/cart", isUserLoggedIn, cartAll);
 // decrement
-userRouter.get("/pdecriment", decrement);
+userRouter.patch("/pdecriment", decrement);
 // increment
-userRouter.get("/pincrement", increment);
+userRouter.patch("/pincrement", increment);
 // remove one item from cart
-userRouter.get("/removeitemcart", removeItemFromCart);
+userRouter.post("/removeitemcart", removeItemFromCart);
 // checkout
 userRouter.get("/checkout", isUserLoggedIn, checkoutController);
 // profile
 userRouter.get("/profile", isUserLoggedIn, profileController);
+// edit profile
+userRouter.post("/editProfile", editor);
 // contact
 userRouter.get("/contact", isUserLoggedIn, contactController);
 // otp

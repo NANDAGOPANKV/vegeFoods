@@ -28,19 +28,23 @@
                   type="email"
                   class="form-control rounded-left"
                   name="email"
+                  id="email"
                   placeholder="email"
                   required
                 />
+                <span class="text-danger" id="emailErrorMsg" ></span>
               </div>
               <div class="form-group">
 
                 <input
                   type="password"
                   name="password"
+                  id="password"
                   class="form-control rounded-left"
                   placeholder="Password"
                   required
                 />
+                 <span class="text-danger" id="passwordErrorMsg" ></span>
               </div>
               <div class="form-group d-flex align-items-center">
                 <div class="w-100">
@@ -74,3 +78,26 @@
   </section>
 
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded",()=>{
+
+    const email = document.getElementById("email")
+    const password = document.getElementById("password")
+
+    const emailErrorMsg = document.getElementById("emailErrorMsg")
+    const passwordErrorMsg = document.getElementById("passwordErrorMsg")
+
+    form.addEventListener("submit",(e) =>{
+      if(email.value === "" || email.value === null){
+        e.preventDefaul()
+        emailErrorMsg.innerHTML = "email required"
+      }
+      if(password.value === "" || password.value === null){
+        e.preventDefaul()
+        passwordErrorMsg.innerHTML = "password required"
+      }
+    })
+
+  })
+</script>

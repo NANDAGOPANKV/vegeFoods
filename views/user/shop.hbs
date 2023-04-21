@@ -1,3 +1,4 @@
+
 <div class="goto-here">
 
   <div
@@ -46,7 +47,6 @@
         {{#if unlistedCategory}}
         <p class="text-center w-100">unlisted category OR no products click all</p>
         {{else}}
-
         {{#if products}}
           {{! product-card }}
           {{#each findProductsByCategoryName}}
@@ -57,7 +57,7 @@
                   src="/productImage/{{image.[0]}}"
                   alt="Colorlib Template"
                 />
-                <span class="status">30%</span>
+                <span class="status">{{discoutPrice}}%</span>
                 <div class="overlay"></div>
               </a>
               <div class="text py-3 pb-4 px-3 text-center">
@@ -109,7 +109,8 @@
                   src="/productImage/{{image.[0]}}"
                   alt="Colorlib Template"
                 />
-                <span class="status">30%</span>
+                <span class="status">{{discoutPrice}}%</span>
+                 
                 <div class="overlay"></div>
               </a>
               <div class="text py-3 pb-4 px-3 text-center">
@@ -127,7 +128,6 @@
                 <div class="bottom-area d-flex px-3">
                   <div class="m-auto d-flex">
                     <a
-                      href="#"
                       class="add-to-cart d-flex justify-content-center align-items-center text-center"
                     >
                       <span><i class="ion-ios-menu"></i></span>
@@ -141,8 +141,8 @@
                     <a
                       href="/wishlist"
                       class="heart d-flex justify-content-center align-items-center"
-                    >
-                      <span><i class="ion-ios-heart"></i></span>
+                    > 
+                   <span class="text-danger"><i class="ion-ios-heart"></i></span> 
                     </a>
                   </div>
                 </div>
@@ -161,7 +161,6 @@
               <li class="active"><a href="/shop?page=1">1</a></li> 
               <li class="active"><a href="/shop?page=2">2</a></li> 
               <li class="active"><a href="/shop?page=3">3</a></li> 
-              
             </ul>
           </div>
         </div>

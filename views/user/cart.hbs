@@ -46,8 +46,11 @@
                   </div>
                 {{else}}
                   {{#each products}}
-                    <tr class="text-center">
-                      <td class="product-remove"><a href="/removeitemcart?id={{productId._id}}"><span
+                    <tr class="text-center" id="{{productId._id}}">
+                      <td class="product-remove"><a
+                      onclick="removeItemCart('{{productId._id}}')"
+                       {{!-- href="/removeitemcart?id={{productId._id}}" --}}
+                       ><span
                             class="ion-ios-close"
                           ></span></a></td>
 
@@ -63,19 +66,16 @@
                       </td>
                       <td class="price">&#x20B9;{{price}}</td>
                        <td class="quantity">
+                         
                         <div class="input-group mb-3">
-                        <button onclick="location.href='/pdecriment?id={{productId._id}}'" class="btn btn-primary p-2" >-</button>
-                          <input
-                            type="number"
-                            name="quantity" 
-                            class="quantity form-control input-number"
-                            value="{{quantity}}" 
-                            min="1"
-                          />
-                        <button onclick="location.href='/pincrement?id={{productId._id}}'" class="btn btn-primary p-2">+</button>
+                  <div class="input-group">
+  <button onclick="decrement('{{productId._id}}')" class="btn btn-primary p-2">-</button>
+  <input id="input_{{productId._id}}" type="number" name="quantity" class="quantity form-control input-number" value="{{quantity}}" min="1" />
+  <button onclick="increment('{{productId._id}}')" class="btn btn-primary p-2">+</button>
+</div>
                         </div> 
                       </td>
-                      <td class="total">&#x20B9;{{totalPrice}}</td>
+                      <td id="tot_{{productId._id}}" class="total">&#x20B9;{{totalPrice}}</td>
                     </tr><!-- END TR-->
                   {{/each}}
 
@@ -145,7 +145,7 @@
             <h3>Cart Totals</h3>
             <p class="d-flex">
               <span>Subtotal</span>
-              <span>&#x20B9;{{subPrice}}</span>
+              <span id="subTot" >&#x20B9;{{subPrice}}</span>
             </p>
             <p class="d-flex">
               <span>Delivery</span>
@@ -158,7 +158,7 @@
             <hr />
             <p class="d-flex total-price">
               <span>Payable</span>
-              <span>&#x20B9;{{grandTotal}}</span>
+              <span id="grandTotal" >&#x20B9;{{grandTotal}}</span>
             </p>
           </div>
           <p><a href="/checkout" class="btn btn-primary py-3 px-4">Proceed to
@@ -329,16 +329,84 @@
   <script src="js/google-map.js"></script>
   <script src="js/main.js"></script>
 
-  <script>
-    $(document).ready(function(){ var quantitiy=0;
-    $('.quantity-right-plus').click(function(e){ // Stop acting like a button
-    e.preventDefault(); // Get the field name var quantity =
-    parseInt($('#quantity').val()); // If is not undefined
-    $('#quantity').val(quantity + 1); // Increment });
-    $('.quantity-left-minus').click(function(e){ // Stop acting like a button
-    e.preventDefault(); // Get the field name var quantity =
-    parseInt($('#quantity').val()); // If is not undefined // Increment
-    if(quantity>0){ $('#quantity').val(quantity - 1); } }); });
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+ <script>
+  // remove item from cart
+  const removeItemCart = function(id){
+    console.log(id)
+    $.ajax({
+      url:"/removeitemcart",
+      method:"post",
+      data:{
+        id:id
+      }
+    }).done((val)=>{
+      console.log(val)
+      // remove item
+      $(`#${id}`).remove();
+       Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title:val?.message,
+        showConfirmButton: false,
+        timer: 1500
+    })
+    })
+    }
+       // ----------------------------------increment-----------------------------------------------//
+     const decrement = function(id){
+      $.ajax({
+        url: '/pdecriment',
+        method: 'patch',
+        data:{
+          id: id
+        }
+      }).done(function(value) {
+        if(value.findQuantity.quantity==1){
+          Swal.fire({
+          position: 'top-end',
+          icon: 'error',
+          title: 'Must Have 1 Stock',
+          text: 'You Must Need Minimum 1 Stock On Your Cart',         
+          showConfirmButton: false,
+          timer: 1950
+          })
+        }
+        $('#input_'+id).val(value.findQuantity.quantity)
+        $("#grandTotal").text(value.grandTotal)
+        $("#tot_"+id).text(value.findQuantity.totalPrice)
+        $("#subTot").text(value.allPrice)
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+        console.error('Error:', textStatus, errorThrown);
+      });
+     }
+     
+
+     // ----------------------------------increment-----------------------------------------------//
+     const increment = function(id){
+      $.ajax({
+        url: '/pincrement',
+        method: 'patch',
+        data: {
+          id: id
+        }
+      }).done(function(value) {
+        $('#input_'+id).val(value.findQuantity.quantity);
+        $("#tot_"+id).text(value.findQuantity.totalPrice)
+         $("#subTot").text(value.allPrice)
+        $("#grandTotal").text(value.grandTotal)
+        if(value.findQuantity.quantity==value.Products.stock){
+          Swal.fire({
+          position: 'top-end',
+          icon: 'error',
+          text: 'We Are extremely Sorry, We Will Add More Stocks Soon',
+          showConfirmButton: false,
+          timer: 1950
+          })
+        }
+      })
+     }
+  
+</script>
 </div>

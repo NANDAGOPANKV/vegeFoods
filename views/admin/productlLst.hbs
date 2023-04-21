@@ -98,7 +98,11 @@
                                             <td class="text-danger" >{{discoutPrice}}</td>
                                             {{/if}}
                                             <td>{{category}}</td>
-                                            <td>{{stock}}</td>
+                                            {{#if stock}}
+                                            <td class="text-success" >{{stock}}</td>
+                                            {{else}}
+                                            <td class="text-danger" >{{stock}}</td>
+                                            {{/if}} 
                                             {{#if Status}}
                                              <td> <a onclick="return confirm(`are sure to unlist`)" href="/productStatus/{{_id}}"><button class="btn btn-danger" >unList</button></a></td>
                                             {{else}}
