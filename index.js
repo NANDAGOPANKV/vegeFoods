@@ -34,6 +34,13 @@ app.engine(
     partialsDir: __dirname + "/views/partials/",
   })
 );
+// costom handler
+const Handlebars = require("handlebars");
+
+// Define a helper function
+Handlebars.registerHelper("isEqual", function (a, b) {
+  return a === b;
+});
 
 // body parser to encode data from req
 app.use(bodyParser.urlencoded({ extended: false }));

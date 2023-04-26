@@ -93,11 +93,7 @@ userRouter.get("/orderSuccess", isUserLoggedIn, successPage);
 // order history/all orders
 userRouter.get("/myorders", isUserLoggedIn, myOrdersController);
 // single order details page
-<<<<<<< HEAD
-userRouter.get("/orderDetails",cartDetailedItem);
-=======
 userRouter.get("/orderDetails", isUserLoggedIn, cartDetailedItem);
->>>>>>> b2
 // profile
 userRouter.get("/profile", isUserLoggedIn, profileController);
 // edit profile

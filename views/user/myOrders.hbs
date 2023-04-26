@@ -14,15 +14,9 @@
                 <th scope="col">Phone</th>
                 <th scope="col">Status</th>
                 <th scope="col">Payment Method</th>
-                <th scope="col">Order Details</th>
-<<<<<<< HEAD
-=======
-                {{#if yes}}
-                  <th scope="col">Return</th>
-                {{else}}
-                  <th scope="col">Cancel</th>
-                {{/if}}
->>>>>>> b2
+                <th scope="col">Order Details</th> 
+                <th scope="col">Order Status</th>   
+               
               </tr>
             </thead>
             <tbody>
@@ -37,22 +31,19 @@
                   <td><button
                       class="btn btn-success"
                       onclick="location.href='orderDetails?id={{_id}}'"
-                    >view</button></td>
-<<<<<<< HEAD
-=======
-                     
-                  {{#if yes}}
+                    >view</button></td> 
+                    {{#if (isEqual orderStatus "delivered")}}
                     <td><button
                         class="btn btn-success"
                         onclick="location.href='returnItem?id={{_id}}'"
                       >Return</button></td>
-                  {{else}}
+                      {{else}}
                     <td><button
                         class="btn btn-success"
                         onclick="location.href='cancelOrder?id={{_id}}'"
                       >Cancel</button></td>
-                  {{/if}}
->>>>>>> b2
+                      {{/if}}
+                   
                 </tr>
               {{/each}}
             </tbody>
