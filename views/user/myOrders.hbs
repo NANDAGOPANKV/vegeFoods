@@ -15,6 +15,14 @@
                 <th scope="col">Status</th>
                 <th scope="col">Payment Method</th>
                 <th scope="col">Order Details</th>
+<<<<<<< HEAD
+=======
+                {{#if yes}}
+                  <th scope="col">Return</th>
+                {{else}}
+                  <th scope="col">Cancel</th>
+                {{/if}}
+>>>>>>> b2
               </tr>
             </thead>
             <tbody>
@@ -30,6 +38,21 @@
                       class="btn btn-success"
                       onclick="location.href='orderDetails?id={{_id}}'"
                     >view</button></td>
+<<<<<<< HEAD
+=======
+                     
+                  {{#if yes}}
+                    <td><button
+                        class="btn btn-success"
+                        onclick="location.href='returnItem?id={{_id}}'"
+                      >Return</button></td>
+                  {{else}}
+                    <td><button
+                        class="btn btn-success"
+                        onclick="location.href='cancelOrder?id={{_id}}'"
+                      >Cancel</button></td>
+                  {{/if}}
+>>>>>>> b2
                 </tr>
               {{/each}}
             </tbody>

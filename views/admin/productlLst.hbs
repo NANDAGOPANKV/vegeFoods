@@ -1,0 +1,130 @@
+  
+<div>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Sidebar Start -->
+        <div class="sidebar pe-4 pb-3">
+            <nav class="navbar bg-light navbar-light">
+                <a href="/dashboard" class="navbar-brand mx-4 mb-3">
+                    <h3 class="text-primary"> </i>vegeFood</h3>
+                </a>
+                <div class="d-flex align-items-center ms-4 mb-4">
+                    <a href="/dashboard" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+                   
+                </div>
+                <div class="navbar-nav w-100">
+                    
+                    <a href="/productlist" class="nav-item nav-link"><i class="fa fa-th me-2"></i>products</a> 
+                    <a href="/userslist" class="nav-item nav-link"><i class="fa fa-th me-2"></i>users</a> 
+                    <a href="/orderlist" class="nav-item nav-link"><i class="fa fa-th me-2"></i>orders</a> 
+                    <a href="/category" class="nav-item nav-link"><i class="fa fa-th me-2"></i>category</a> 
+                    <a href="/copons" class="nav-item nav-link"><i class="fa fa-th me-2"></i>cupons</a> 
+                </div>
+            </nav>
+        </div>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
+                <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+                    <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
+                </a>
+                <a href="#" class="sidebar-toggler flex-shrink-0">
+                    <i class="fa fa-bars"></i>
+                </a>
+                <form class="d-none d-md-flex ms-4">
+                    <input class="form-control border-0" type="search" placeholder="Search">
+                </form>
+                <div class="navbar-nav align-items-center ms-auto">
+                     
+                    
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            
+                            <span class="d-none d-lg-inline-flex">{{name}}</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end bg-light border-1 rounded-0 rounded-bottom m-0">
+                              <a href="/adminprofile" class="dropdown-item">My Profile</a>
+                             <a href="/adminsignout" onclick="return confirm(`are sure to sign out`)" class="dropdown-item">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <!-- Navbar End --> 
+            <!-- Sale & Revenue Start -->
+            <div class="container-fluid pt-4 px-4">
+            <button onclick="location.href='/addproduct'" class="btn btn-success m-3" >Add Product</button>
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="bg-light rounded h-100 p-4">
+                            <h6 class="mb-4">Responsive Table</h6>
+                            <div class="table-responsive">
+                                <table class="table  table-hover">
+                                    <thead>
+                                        <tr >
+                                            <th scope="col">#</th>
+                                            <th scope="col">image</th>
+                                            <th scope="col">name</th> 
+                                            <th scope="col">price</th>
+                                            <th scope="col">discount</th>
+                                            <th scope="col">category</th>
+                                            <th scope="col">stock</th>
+                                            <th scope="col">status</th>
+                                            <th scope="col">edit</th>
+                                            <th scope="col">delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody >
+                                        {{#each findAllProducts}}
+                                        <tr>
+                                            <th scope="row">{{@index}}</th>
+                                            <td><a href="/viewsignproduct?id={{_id}}"><img class="rounded" src="/productImage/{{image.[0]}}" style="width: 75px; height: 75px; object-fit: fill;" alt="nop"></a></td> 
+                                            <td>{{name}}</td>
+                                            <td>{{price}}</td>
+                                            {{#if discoutPrice}}
+                                            <td class="text-success" >{{discoutPrice}}</td>
+                                            {{else}}
+                                            <td class="text-danger" >{{discoutPrice}}</td>
+                                            {{/if}}
+                                            <td>{{category}}</td>
+                                            {{#if stock}}
+                                            <td class="text-success" >{{stock}}</td>
+                                            {{else}}
+                                            <td class="text-danger" >{{stock}}</td>
+                                            {{/if}} 
+                                            {{#if Status}}
+                                             <td> <a onclick="return confirm(`are sure to unlist`)" href="/productStatus/{{_id}}"><button class="btn btn-danger" >unList</button></a></td>
+                                            {{else}}
+                                             <td> <a onclick="return confirm(`are sure to list`)" href="/productStatus/{{_id}}"><button class="btn btn-success">List</button></a></td>
+                                            {{/if}}
+                                            <td><a onclick="return confirm(`are sure to edit`)" href="/updateitem?id={{_id}}"><button class="btn btn-success" >edit</button></a></td>
+                                            <td><a onclick="return confirm(`are sure to delete`)" href="/deleteProduct/{{_id}}"><button class="btn btn-success" >delete</button></a></td>
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sale & Revenue End --> 
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+ 
+    
+</div>
+
+ 

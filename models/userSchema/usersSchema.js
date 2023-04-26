@@ -6,6 +6,10 @@ const usersSchema = mongoose.Schema(
       type: String,
       require: true,
     },
+    dob: {
+      type: String,
+      required: false,
+    },
     email: {
       type: String,
       require: true,
@@ -23,10 +27,6 @@ const usersSchema = mongoose.Schema(
       required: false,
     },
     address: {
-      type: Array,
-      required: false,
-    },
-    wishList: {
       type: Array,
       required: false,
     },

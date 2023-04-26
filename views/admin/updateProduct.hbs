@@ -1,0 +1,181 @@
+  
+<div>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Sidebar Start -->
+        <div class="sidebar pe-4 pb-3">
+            <nav class="navbar bg-light navbar-light">
+                <a href="/dashboard" class="navbar-brand mx-4 mb-3">
+                    <h3 class="text-primary"> </i>vegeFood</h3>
+                </a>
+                <div class="d-flex align-items-center ms-4 mb-4">
+                    <a href="/dashboard" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+                   
+                </div>
+                <div class="navbar-nav w-100">
+                    
+                    <a href="/productlist" class="nav-item nav-link"><i class="fa fa-th me-2"></i>products</a> 
+                    <a href="/userslist" class="nav-item nav-link"><i class="fa fa-th me-2"></i>users</a> 
+                    <a href="/orderlist" class="nav-item nav-link"><i class="fa fa-th me-2"></i>orders</a> 
+                    <a href="/category" class="nav-item nav-link"><i class="fa fa-th me-2"></i>category</a> 
+                    <a href="/copons" class="nav-item nav-link"><i class="fa fa-th me-2"></i>cupons</a> 
+                </div>
+            </nav>
+        </div>
+        <!-- Sidebar End -->
+
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
+                <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+                    <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
+                </a>
+                <a href="#" class="sidebar-toggler flex-shrink-0">
+                    <i class="fa fa-bars"></i>
+                </a>
+                <form class="d-none d-md-flex ms-4">
+                    <input class="form-control border-0" type="search" placeholder="Search">
+                </form>
+                <div class="navbar-nav align-items-center ms-auto">
+                     
+                    
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            
+                            <span class="d-none d-lg-inline-flex">John Doe</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end bg-light border-1 rounded-0 rounded-bottom m-0">
+                             <a href="/adminprofile" class="dropdown-item">My Profile</a>
+                            <a href="/adminsignout" onclick="return confirm(`are sure to sign out`)" class="dropdown-item">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <!-- Navbar End --> 
+
+            <!-- only here -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-12"> 
+                        <div>
+    <p>{{product}}</p>
+</div>
+
+ 
+
+<div class="container w-100" >
+
+    <div class="row">
+        <div class="col-6">
+            <div class="container text-center border w-100 h-100 rounded">
+       <span>Edit Image</span>
+           {{!-- img1, img2, img3 --}}
+<div>
+    {{#if img1}}
+                <img src="/productImage/{{img1}}" style="width: 100px; height: 100px;" alt="">
+{{/if}}
+{{#if img2}}
+                <img src="/productImage/{{img2}}" style="width: 100px; height: 100px;" alt="">
+{{/if}}
+{{#if img3}}
+                <img src="/productImage/{{img3}}" style="width: 100px; height: 100px;" alt="">
+{{/if}}
+<div>
+
+</div>
+</div>
+<form action="/changeImage?id={{_id}}" method="post" enctype="multipart/form-data"> 
+  <div class="form-group input-group-md my-2">
+  <input type="file" class="form-control" required name="image" multiple value="{{image}}" name="image" placeholder="product img">
+  </div><br>
+<input type="submit" value="submit">
+</form>
+    </div>
+        </div>
+        <div class="col-6">
+           <div class="container w-100">
+    
+        
+	<div class="row w-100 justify-content-center align-items-center text-center p-2">
+		<div class="m-1 w-100 col-sm-8 col-md-6 col-lg-4 shadow-sm p-3 mb-5 bg-white border rounded">
+  
+			<div class="pt-1  pb-3">
+				<p class="text-center text-uppercase mt-1">UPDATE PRODUCT</p>
+			 
+          
+
+                <form class="form text-start" action="/updateitem/?id={{_id}}" method="POST"  >
+				
+					 {{!-- name --}}
+					 <div class="form-group input-group-md">
+                        <span>name</span><br>
+                        <input class="form-control" type="text" name="name" required value="{{name}}">
+                     </div>
+					 {{!-- price --}}
+					 <div class="form-group input-group-md">
+                        <span>price</span><br>
+                        <input class="form-control" type="text" name="price" required value="{{price}}">
+                     </div>
+					 {{!-- stock --}}
+					 <div class="form-group input-group-md">
+                        <span>stock</span><br>
+                        <input class="form-control" type="text" name="stock" required value="{{stock}}">
+                     </div>
+					 {{!-- stock --}}
+					 <div class="form-group input-group-md">
+                        <span>Discount</span><br>
+                        <input class="form-control" type="number" name="discount" required value="{{discoutPrice}}">
+                     </div>
+					 {{!-- description --}}
+					 <div class="form-group input-group-md">
+                        <span>description</span><br>
+                        <input class="form-control py-3" type="text" name="description" required value="{{description}}">
+                     </div>
+                     
+				 
+					 
+                    <div class="form-group input-group-md ">
+                        <span>category</span>
+                        <select class="form-select form-select-sm" name="category" aria-label=".form-select-sm example" style="width: 100%;height:38px; border-color:gray; border-radius: 3px">
+                            {{#if category}}
+                            <option selected>{{category}}</option>
+                            {{else}}
+                            <option selected>choose a category</option>
+                            {{/if}}
+							{{#each categoryObj}}
+                            <option value="{{categoryName}}" >{{categoryName}}</option>
+							{{/each}}
+                        </select>
+                    </div>
+                    <div>
+                        
+                    </div>
+					<button class="btn btn-block btn-success mt-4" type="submit">
+						Update Product
+					</button>
+				</form>
+                {{!-- new form --}}
+			</div>
+		</div>
+	</div> 
+</div> 
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- only here --> 
+<!-- Back to Top -->
+<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+</div>

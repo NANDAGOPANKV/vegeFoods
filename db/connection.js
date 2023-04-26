@@ -1,7 +1,9 @@
+const dotenv = require("dotenv");
+dotenv.config();
 const mongoose = require("mongoose");
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/vegefoodsdb")
+  .connect(process.env.DB_connection)
   .then(() => {
     console.log("mongodb connected");
   })

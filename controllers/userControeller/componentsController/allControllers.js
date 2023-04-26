@@ -201,7 +201,11 @@ const removeitemwishlist = async (req, res) => {
 };
 
 // cart controller add to cart
+<<<<<<< HEAD
 const cartController = async (req, res) => {
+=======
+const cartController = async (req, res) => {  
+>>>>>>> b2
   try {
     if (req.session.userData) {
       const userDataSession = req.session.userData;
@@ -265,6 +269,11 @@ const cartController = async (req, res) => {
                 $push: {
                   product: {
                     productId: productId,
+<<<<<<< HEAD
+=======
+                    image: productData.image,
+                    name: productData.name,
+>>>>>>> b2
                     price: productData.price,
                     totalPrice: productData.price,
                     discoutPrice: productData.discoutPrice,
@@ -281,6 +290,11 @@ const cartController = async (req, res) => {
             product: [
               {
                 productId: productId,
+<<<<<<< HEAD
+=======
+                image: productData.image,
+                name: productData.name,
+>>>>>>> b2
                 price: productData.price,
                 totalPrice: productData.price,
                 discoutPrice: productData.discoutPrice,
@@ -300,6 +314,11 @@ const cartController = async (req, res) => {
           product: [
             {
               productId: productId,
+<<<<<<< HEAD
+=======
+              image: productData.image,
+              name: productData.name,
+>>>>>>> b2
               price: productData.price,
               totalPrice: productData.price,
               discoutPrice: productData.discoutPrice,
@@ -333,9 +352,17 @@ const cartAll = async (req, res) => {
       const findCart = await Cart.findOne({ user: user._id })
         .populate("product.productId")
         .lean();
+<<<<<<< HEAD
       // all products
       let products = findCart?.product;
       let Stock = Product.find().lean();
+=======
+      const findCartItems = await Cart.findOne({ user: user._id });
+      // all products
+      let products = findCart?.product;
+      let Stock = Product.find().lean();
+      console.log(findCartItems);
+>>>>>>> b2
       if (products?.length > 0) {
         const subPrice = findCart.product.reduce(
           (acc, curr) => (acc += curr.totalPrice),

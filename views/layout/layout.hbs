@@ -18,13 +18,27 @@
     {{#if admindash}}
     {{>admindashLinks}}
     {{/if}}
+    {{#if aspv}}
+    {{>adminSingleProductViewLink}}
+    {{/if}}
+    
+    {{#if ajax}}
+    {{>ajaxLink}}
+    {{/if}}
+
+</body>
 </head>
 <body>
+    {{#if aspv}}
+    {{>adminSingProductScript}}
+    {{/if}}
 
     {{#if user}}
     {{>userNavbar}}
     {{/if}}
-    
+ 
+     
+ 
     {{{body}}}
 
     {{#if user}}

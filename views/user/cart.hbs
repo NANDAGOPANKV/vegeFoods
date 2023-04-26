@@ -1,3 +1,4 @@
+ 
 <div class="goto-here">
 
   <div
@@ -36,73 +37,49 @@
                 </tr>
               </thead>
               <tbody>
-                <tr class="text-center">
-                  <td class="product-remove"><a href="#"><span
-                        class="ion-ios-close"
-                      ></span></a></td>
+                {{#if emptyCart}}
+                  <div>
+                    <span>your cart is empty</span>
+                    <h6>click add button to add products to the cart</h6>
+                    <a href="/shop">shop</a>
+                    <button></button>
+                  </div>
+                {{else}}
+                  {{#each products}}
+                    <tr class="text-center" id="{{productId._id}}">
+                      <td class="product-remove"><a
+                      onclick="removeItemCart('{{productId._id}}')"
+                       {{!-- href="/removeitemcart?id={{productId._id}}" --}}
+                       ><span
+                            class="ion-ios-close"
+                          ></span></a></td>
 
-                  <td class="image-prod"><div
-                      class="img"
-                      style="background-image:url(images/product-3.jpg);"
-                    ></div></td>
+                      <td class="image-prod"><div><img
+                            class="img rounded"
+                            src="/productImage/{{productId.image.[0]}}"
+                            alt="Colorlib Template"
+                          /></div></td>
 
-                  <td class="product-name">
-                    <h3>Bell Pepper</h3>
-                    <p>Far far away, behind the word mountains, far from the
-                      countries</p>
-                  </td>
+                      <td class="product-name">
+                        <h3>{{productId.name}}</h3>
+                        <p>{{productId.description}}</p>
+                      </td>
+                      <td class="price">&#x20B9;{{price}}</td>
+                       <td class="quantity">
+                         
+                        <div class="input-group mb-3">
+                  <div class="input-group">
+  <button onclick="decrement('{{productId._id}}')" class="btn btn-primary p-2">-</button>
+  <input id="input_{{productId._id}}" type="number" name="quantity" class="quantity form-control input-number" value="{{quantity}}" min="1" />
+  <button onclick="increment('{{productId._id}}')" class="btn btn-primary p-2">+</button>
+</div>
+                        </div> 
+                      </td>
+                      <td id="tot_{{productId._id}}" class="total">&#x20B9;{{totalPrice}}</td>
+                    </tr><!-- END TR-->
+                  {{/each}}
 
-                  <td class="price">$4.90</td>
-
-                  <td class="quantity">
-                    <div class="input-group mb-3">
-                      <input
-                        type="text"
-                        name="quantity"
-                        class="quantity form-control input-number"
-                        value="1"
-                        min="1"
-                        max="100"
-                      />
-                    </div>
-                  </td>
-
-                  <td class="total">$4.90</td>
-                </tr><!-- END TR-->
-
-                <tr class="text-center">
-                  <td class="product-remove"><a href="#"><span
-                        class="ion-ios-close"
-                      ></span></a></td>
-
-                  <td class="image-prod"><div
-                      class="img"
-                      style="background-image:url(images/product-4.jpg);"
-                    ></div></td>
-
-                  <td class="product-name">
-                    <h3>Bell Pepper</h3>
-                    <p>Far far away, behind the word mountains, far from the
-                      countries</p>
-                  </td>
-
-                  <td class="price">$15.70</td>
-
-                  <td class="quantity">
-                    <div class="input-group mb-3">
-                      <input
-                        type="text"
-                        name="quantity"
-                        class="quantity form-control input-number"
-                        value="1"
-                        min="1"
-                        max="100"
-                      />
-                    </div>
-                  </td>
-
-                  <td class="total">$15.70</td>
-                </tr><!-- END TR-->
+                {{/if}}
               </tbody>
             </table>
           </div>
@@ -168,24 +145,29 @@
             <h3>Cart Totals</h3>
             <p class="d-flex">
               <span>Subtotal</span>
-              <span>$20.60</span>
+              <span id="subTot" >&#x20B9;{{subPrice}}</span>
             </p>
             <p class="d-flex">
               <span>Delivery</span>
-              <span>$0.00</span>
+              <span>{{deliveryCharge}}</span>
             </p>
             <p class="d-flex">
               <span>Discount</span>
-              <span>$3.00</span>
+              <span>{{discount}}</span>
             </p>
             <hr />
             <p class="d-flex total-price">
-              <span>Total</span>
-              <span>$17.60</span>
+              <span>Payable</span>
+              <span id="grandTotal" >&#x20B9;{{grandTotal}}</span>
             </p>
           </div>
+<<<<<<< HEAD
           <p><a href="/checkout" class="btn btn-primary py-3 px-4">Proceed to
               Checkout</a></p>
+=======
+          <p><a onclick="proceedPay('{{grandTotal}}','{{subPrice}}',{{deliveryCharge}})"   class="btn btn-primary py-3 px-4">Proceed to
+              Checkout</a></p> 
+>>>>>>> b2
         </div>
       </div>
     </div>
@@ -430,6 +412,31 @@
         }
       })
      }
+<<<<<<< HEAD
   
 </script>
 </div>
+=======
+     // ----------------------------------proceed to checkout-----------------------------------------------//
+     const proceedPay = function(total,Subtotal,Delivery){
+    
+
+      $.ajax({
+        url:"/checkoutpost",
+        method:"post",
+        data:{
+          total:total,
+          subTotal:Subtotal,
+          delCost:Delivery
+        }
+      }).done((val)=>{
+         window.location.href = "/checkout";
+      })
+
+     }
+// href="/checkout" 
+     
+  
+</script>
+</div>
+>>>>>>> b2

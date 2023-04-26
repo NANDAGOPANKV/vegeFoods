@@ -2,6 +2,10 @@ const Order = require("../../models/adminSchema/orderSchema");
 const Cart = require("../../models/adminSchema/addToCartSchema");
 const Products = require("../../models/adminSchema/productsSchema");
 
+<<<<<<< HEAD
+=======
+// order placing
+>>>>>>> b2
 const placeOrderController = async (req, res) => {
   const cartAmt = req.session.cartAmt;
   const uId = req.session.userData;
@@ -72,15 +76,24 @@ const placeOrderController = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
+=======
+// order success page
+>>>>>>> b2
 const successPage = (req, res) => {
   res.render("orderSuccess");
 };
 
+<<<<<<< HEAD
+=======
+// taking all orders
+>>>>>>> b2
 const myOrdersController = async (req, res) => {
   // show all possible order history
   const uId = req.session.userId;
 
   const allMyOrders = await Order.find({ user: uId }).lean();
+<<<<<<< HEAD
   const allMyOrdersAddress = await Order.find({ user: uId }).select("address");
   const allMyOrdersProducts = await Order.find({ user: uId }).select(
     "products"
@@ -98,26 +111,65 @@ const myOrdersController = async (req, res) => {
   // finding all products
   const allPRoducts = await Products.find({ _id: { $in: allItemsIds } });
   console.log(allMyOrders);
+=======
+  // check status for return
+  const checkStatus = allMyOrders?.map((data) => data?.orderStatus).join(", ");
+
+  console.log(checkStatus);
+  // Output: 'ordered'
+
+  let yes;
+  if (checkStatus == "delivered") {
+    yes = true;
+  } else {
+    yes = false;
+  }
+>>>>>>> b2
 
   res.render("myOrders", {
     admindash: true,
     admin: true,
     name: "Nandagopan",
     allMyOrders,
+<<<<<<< HEAD
   });
 };
 
+=======
+    yes,
+  });
+};
+
+// card for order detaild page
+>>>>>>> b2
 const cartDetailedItem = async (req, res) => {
   const oId = req.query.id;
   const uId = req.session.userId;
 
   let cartItem = await Cart.find({ user: uId }).select("product").lean();
   const orderItem = await Order.find({ _id: oId }).lean();
+<<<<<<< HEAD
   console.log(orderItem);
   console.log("orderItem");
   cartItem = cartItem.map((data) => data?.product);
   console.log(cartItem);
   const [{ delCost, totalAmount, address, paymentMethod }] = orderItem;
+=======
+
+  cartItem = cartItem.map((data) => data?.product);
+
+  const [
+    { delCost, totalAmount, address, paymentMethod, _id, orderStatus, date },
+  ] = orderItem;
+  // take a value
+
+  let allMyOrdersProducts = await Order.find({ _id: oId }).select("products");
+  allMyOrdersProducts = allMyOrdersProducts
+    .map((data) => data?.products)
+    .flat(Infinity);
+  console.log(allMyOrdersProducts);
+  // let daate = new Date().toLocaleDateString();
+>>>>>>> b2
   res.render("orderItemSingle", {
     user: true,
     orderItem,
@@ -125,6 +177,13 @@ const cartDetailedItem = async (req, res) => {
     totalAmount,
     address,
     paymentMethod,
+<<<<<<< HEAD
+=======
+    _id,
+    orderStatus,
+    date,
+    allMyOrdersProducts,
+>>>>>>> b2
   });
 };
 
