@@ -68,36 +68,82 @@
                 <div class="row g-4">
                     <div class="col-12">
                         <div class="bg-light rounded h-100 p-4">
-                            <h6 class="mb-4">All Orders</h6>
+                            {{!-- card --}}
+                            <div class="w-100   p-3 " >
+                                <div class="w-100 h-50   d-flex flex-row">
+                                <div class="w-50 h-50 m-1 p-3" >
+                                 <span class="p-3">User</span>
+                                    <h5>name: {{name}}</h5> 
+                                    <p>id: {{_id}}</p>
+                                    <p>email: {{email}}</p>
+                                    <p>number: {{phone}}</p>
+                                     
+                                </div>
+                                <div class="w-50 h-50 m-1" >
+                                 <span class="p-3">Delivery Address</span>
+                                    <h5>name: {{name}}</h5>
+                                    <p>number: {{phone}}</p>
+                                    <p>id: {{_id}}</p>
+                                    <p>payment Method: {{paymentMethod}}</p>
+                                    <p>address: {{address}}</p>
+                                    <div>
+                                        <form action="/status" method="post">
+                                        <select class="form-select form-select-sm"  name="status" aria-label=".form-select-sm example" style="width: 100%;height:38px; border-color:gray; border-radius: 3px">
+                                        <option value="{{orderStatus}}">{{orderStatus}}</option>
+                                        <option value="shipped">shipped</option>
+                                        <option value="delivered">delivered</option>
+                                        </select>
+                                         <input type="hidden" name="id" value="{{_id}}">
+                                        <input type="submit" class="btn btn-primary m-2">
+                                        </form>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="w-100 h-50 ">
+                                 <span class="p-3">Product Details</span>
+                                      <!-- Sale & Revenue Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="bg-light rounded h-100 p-4">
+                            <h6 class="mb-4">Responsive Table</h6>
                             <div class="table-responsive">
                                 <table class="table  table-hover">
                                     <thead>
-                                        <tr class="w-100 text-center">
-                                            <th scope="col">#</th>
-                                            <th scope="col"> Name</th> 
-                                            <th scope="col">Order Id</th>
-                                            <th scope="col">Mobile</th>
-                                            <th scope="col">Order Status</th>
-                                            <th scope="col">Payment Method</th>
-                                             <th scope="col">Order Details</th>
+                                        <tr> 
+                                            <th scope="col"> Product Id</th> 
+                                            <th scope="col">Product Name</th>
+                                            <th scope="col">Image</th> 
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Total Price</th>
+                                            <th scope="col">Quantity</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{#each allOrders}}
-                                        <tr class="w-100 text-center" >
-                                            <th scope="row">{{@index}}</th>
-                                            <td>{{address.name}}</td> 
-                                            <td>{{_id}}</td>
-                                            <td>{{address.phone}}</td>
-                                            <td>{{orderStatus}}</td>
-                                            <td>{{paymentMethod}}</td>
-                                             <td><button class="btn btn-success"
-                                             onclick="location.href='aorderDetails?id={{_id}}'">view</button></td>
+                                        {{#each order}}
+                                        <tr>
+                                            <td>{{productId}}</td> 
+                                            <td> {{name}}</td>
+                                            <td style="width: 10rem;">
+                                                <img class="w-100 rounded" src="productImage/{{image.[0]}}" alt="no image">
+                                            </td>
+                                            <td>{{price}}</td>
+                                            <td>{{totalPrice}}</td>
+                                            <td>{{quantity}}</td>
                                         </tr>
                                         {{/each}}
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sale & Revenue End --> 
+                                </div>
+                            </div>
+
+                            {{!-- card --}}
                         </div>
                     </div>
                 </div>
@@ -110,4 +156,10 @@
     <!-- JavaScript Libraries -->
     
 </div> 
-  
+
+<script>
+    function changeStatus(id,status){
+        console.log(id)
+        console.log(status)
+    }
+</script>

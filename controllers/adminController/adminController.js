@@ -186,8 +186,35 @@ const dashBoard = (req, res) => {
 // order list
 const orderList = async (req, res) => {
   const allOrders = await Orders.find().lean();
-  console.log(allOrders);
   res.render("ordersList", { admin: true, admindash: true, allOrders });
+};
+// order detail page
+const orderDetaild = async (req, res) => {
+  const oId = req.query.id;
+  // find order by id
+  let order = await Orders.find({ _id: oId }).lean();
+  const addressField = await Orders.find({ _id: oId }).select("address").lean();
+
+  console.log(order);
+  const [{ paymentMethod, _id, orderStatus }] = order;
+  const [{ name, email, phone, address }] = addressField.map(
+    (data) => data?.address
+  );
+
+  order = order?.map((data) => data?.products).flat(Infinity);
+
+  res.render("orderDetail", {
+    admindash: true,
+    paymentMethod,
+    name,
+    email,
+    _id,
+    address,
+    phone,
+    order,
+    orderStatus,
+  });
+  // res.send(req.query.id);
 };
 
 // add product controller
@@ -204,6 +231,20 @@ const addProductController = async (req, res) => {
   }
 };
 
+// order status changing
+const orderStatus = async (req, res) => {
+  const { status, id } = req.body;
+  console.log(status, id);
+
+  // find one cart item
+  const item = await Orders.findOneAndUpdate(
+    { _id: id },
+    { orderStatus: status },
+    { new: true }
+  );
+  res.redirect("/orderlist");
+};
+
 // single product view controller
 const singleProductView = (req, res) => {
   const name = "ds";
@@ -216,6 +257,7 @@ const allProfilesController = (req, res) => {
 };
 
 module.exports = {
+  orderDetaild,
   allProfilesController,
   singleProductView,
   addProductController,
@@ -231,4 +273,5 @@ module.exports = {
   removeCategory,
   signUpController,
   signOutController,
+  orderStatus,
 };

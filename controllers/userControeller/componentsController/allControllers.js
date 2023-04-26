@@ -201,7 +201,7 @@ const removeitemwishlist = async (req, res) => {
 };
 
 // cart controller add to cart
-const cartController = async (req, res) => {
+const cartController = async (req, res) => {  
   try {
     if (req.session.userData) {
       const userDataSession = req.session.userData;
@@ -265,6 +265,8 @@ const cartController = async (req, res) => {
                 $push: {
                   product: {
                     productId: productId,
+                    image: productData.image,
+                    name: productData.name,
                     price: productData.price,
                     totalPrice: productData.price,
                     discoutPrice: productData.discoutPrice,
@@ -281,6 +283,8 @@ const cartController = async (req, res) => {
             product: [
               {
                 productId: productId,
+                image: productData.image,
+                name: productData.name,
                 price: productData.price,
                 totalPrice: productData.price,
                 discoutPrice: productData.discoutPrice,
@@ -300,6 +304,8 @@ const cartController = async (req, res) => {
           product: [
             {
               productId: productId,
+              image: productData.image,
+              name: productData.name,
               price: productData.price,
               totalPrice: productData.price,
               discoutPrice: productData.discoutPrice,
@@ -333,10 +339,11 @@ const cartAll = async (req, res) => {
       const findCart = await Cart.findOne({ user: user._id })
         .populate("product.productId")
         .lean();
+      const findCartItems = await Cart.findOne({ user: user._id });
       // all products
       let products = findCart?.product;
       let Stock = Product.find().lean();
-      console.log(findCart);
+      console.log(findCartItems);
       if (products?.length > 0) {
         const subPrice = findCart.product.reduce(
           (acc, curr) => (acc += curr.totalPrice),

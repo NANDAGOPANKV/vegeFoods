@@ -19,6 +19,8 @@ const {
   addProductController,
   singleProductView,
   allProfilesController,
+  orderDetaild,
+  orderStatus,
 } = require("../controllers/adminController/adminController");
 
 const {
@@ -71,9 +73,9 @@ adminRoute.get("/userslist", isAdminLoggedIn, findAllUsers);
 
 // all orders
 adminRoute.get("/orderlist", isAdminLoggedIn, orderList);
-adminRoute.get("/aorderDetails", (req, res) => {
-  res.send(req.query.id);
-});
+adminRoute.get("/aorderDetails", isAdminLoggedIn, orderDetaild);
+// order status edit
+adminRoute.post("/status", orderStatus);
 // ----------------------products Products
 
 // all product

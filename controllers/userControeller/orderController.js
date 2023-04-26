@@ -84,29 +84,25 @@ const myOrdersController = async (req, res) => {
   const uId = req.session.userId;
 
   const allMyOrders = await Order.find({ user: uId }).lean();
-  const allMyOrdersAddress = await Order.find({ user: uId }).select("address");
-  const allMyOrdersProducts = await Order.find({ user: uId }).select(
-    "products"
-  );
+  // check status for return
+  const checkStatus = allMyOrders?.map((data) => data?.orderStatus).join(", ");
 
-  const allItems = allMyOrders.map((order) => {
-    return order?.products?.map((product) => {
-      return product?.productId;
-    });
-  });
+  console.log(checkStatus);
+  // Output: 'ordered'
 
-  // all product ids in one array
-  const allItemsIds = allItems.flat(Infinity);
-
-  // finding all products
-  const allPRoducts = await Products.find({ _id: { $in: allItemsIds } });
-  console.log(allMyOrders);
+  let yes;
+  if (checkStatus == "delivered") {
+    yes = true;
+  } else {
+    yes = false;
+  }
 
   res.render("myOrders", {
     admindash: true,
     admin: true,
     name: "Nandagopan",
     allMyOrders,
+    yes,
   });
 };
 
@@ -117,14 +113,19 @@ const cartDetailedItem = async (req, res) => {
 
   let cartItem = await Cart.find({ user: uId }).select("product").lean();
   const orderItem = await Order.find({ _id: oId }).lean();
-  console.log(orderItem);
-  console.log("orderItem");
+
   cartItem = cartItem.map((data) => data?.product);
-  console.log(cartItem);
+
   const [
     { delCost, totalAmount, address, paymentMethod, _id, orderStatus, date },
   ] = orderItem;
   // take a value
+
+  let allMyOrdersProducts = await Order.find({ _id: oId }).select("products");
+  allMyOrdersProducts = allMyOrdersProducts
+    .map((data) => data?.products)
+    .flat(Infinity);
+  console.log(allMyOrdersProducts);
   // let daate = new Date().toLocaleDateString();
   res.render("orderItemSingle", {
     user: true,
@@ -136,6 +137,7 @@ const cartDetailedItem = async (req, res) => {
     _id,
     orderStatus,
     date,
+    allMyOrdersProducts,
   });
 };
 
