@@ -2,6 +2,7 @@ const Order = require("../../models/adminSchema/orderSchema");
 const Cart = require("../../models/adminSchema/addToCartSchema");
 const Products = require("../../models/adminSchema/productsSchema");
 
+// order placing
 const placeOrderController = async (req, res) => {
   const cartAmt = req.session.cartAmt;
   const uId = req.session.userData;
@@ -72,10 +73,12 @@ const placeOrderController = async (req, res) => {
   }
 };
 
+// order success page
 const successPage = (req, res) => {
   res.render("orderSuccess");
 };
 
+// taking all orders
 const myOrdersController = async (req, res) => {
   // show all possible order history
   const uId = req.session.userId;
@@ -107,6 +110,7 @@ const myOrdersController = async (req, res) => {
   });
 };
 
+// card for order detaild page
 const cartDetailedItem = async (req, res) => {
   const oId = req.query.id;
   const uId = req.session.userId;
@@ -117,7 +121,11 @@ const cartDetailedItem = async (req, res) => {
   console.log("orderItem");
   cartItem = cartItem.map((data) => data?.product);
   console.log(cartItem);
-  const [{ delCost, totalAmount, address, paymentMethod }] = orderItem;
+  const [
+    { delCost, totalAmount, address, paymentMethod, _id, orderStatus, date },
+  ] = orderItem;
+  // take a value
+  // let daate = new Date().toLocaleDateString();
   res.render("orderItemSingle", {
     user: true,
     orderItem,
@@ -125,6 +133,9 @@ const cartDetailedItem = async (req, res) => {
     totalAmount,
     address,
     paymentMethod,
+    _id,
+    orderStatus,
+    date,
   });
 };
 

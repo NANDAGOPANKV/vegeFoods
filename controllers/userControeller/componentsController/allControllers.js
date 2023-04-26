@@ -336,6 +336,7 @@ const cartAll = async (req, res) => {
       // all products
       let products = findCart?.product;
       let Stock = Product.find().lean();
+      console.log(findCart);
       if (products?.length > 0) {
         const subPrice = findCart.product.reduce(
           (acc, curr) => (acc += curr.totalPrice),

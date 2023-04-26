@@ -5,6 +5,7 @@ const bcript = require("bcrypt");
 const User = require("../../models/userSchema/usersSchema");
 const Admin = require("../../models/adminSchema/adminSchema");
 const Category = require("../../models/adminSchema/categorySchema");
+const Orders = require("../../models/adminSchema/orderSchema");
 
 // find all users
 const findAllUsers = async (req, res) => {
@@ -183,8 +184,10 @@ const dashBoard = (req, res) => {
 };
 
 // order list
-const orderList = (req, res) => {
-  res.render("ordersList", { admin: true, admindash: true });
+const orderList = async (req, res) => {
+  const allOrders = await Orders.find().lean();
+  console.log(allOrders);
+  res.render("ordersList", { admin: true, admindash: true, allOrders });
 };
 
 // add product controller

@@ -71,6 +71,9 @@ adminRoute.get("/userslist", isAdminLoggedIn, findAllUsers);
 
 // all orders
 adminRoute.get("/orderlist", isAdminLoggedIn, orderList);
+adminRoute.get("/aorderDetails", (req, res) => {
+  res.send(req.query.id);
+});
 // ----------------------products Products
 
 // all product

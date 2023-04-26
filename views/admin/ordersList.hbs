@@ -72,25 +72,27 @@
                             <div class="table-responsive">
                                 <table class="table  table-hover">
                                     <thead>
-                                        <tr>
+                                        <tr class="w-100 text-center">
                                             <th scope="col">#</th>
                                             <th scope="col"> Name</th> 
-                                            <th scope="col">Email</th>
+                                            <th scope="col">Order Id</th>
                                             <th scope="col">Mobile</th>
-                                            <th scope="col">Status</th>
+                                            <th scope="col">Order Status</th>
                                             <th scope="col">Payment Method</th>
+                                             <th scope="col">Order Details</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{#each users}}
-                                        <tr>
+                                        {{#each allOrders}}
+                                        <tr class="w-100 text-center" >
                                             <th scope="row">{{@index}}</th>
-                                            <td>{{name}}</td> 
-                                            <td>{{email}}</td>
-                                            <td>{{phone}}</td>
-                                            <td>{{status}}</td>
-                                            <td>{{status}}</td>
-                                             
+                                            <td>{{address.name}}</td> 
+                                            <td>{{_id}}</td>
+                                            <td>{{address.phone}}</td>
+                                            <td>{{orderStatus}}</td>
+                                            <td>{{paymentMethod}}</td>
+                                             <td><button class="btn btn-success"
+                                             onclick="location.href='aorderDetails?id={{_id}}'">view</button></td>
                                         </tr>
                                         {{/each}}
                                     </tbody>
@@ -107,6 +109,5 @@
 
     <!-- JavaScript Libraries -->
     
-</div>
-
- 
+</div> 
+  
