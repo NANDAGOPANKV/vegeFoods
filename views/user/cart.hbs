@@ -161,8 +161,8 @@
               <span id="grandTotal" >&#x20B9;{{grandTotal}}</span>
             </p>
           </div>
-          <p><a href="/checkout" class="btn btn-primary py-3 px-4">Proceed to
-              Checkout</a></p>
+          <p><a onclick="proceedPay('{{grandTotal}}','{{subPrice}}',{{deliveryCharge}})"   class="btn btn-primary py-3 px-4">Proceed to
+              Checkout</a></p> 
         </div>
       </div>
     </div>
@@ -407,6 +407,26 @@
         }
       })
      }
+     // ----------------------------------proceed to checkout-----------------------------------------------//
+     const proceedPay = function(total,Subtotal,Delivery){
+      console.log(total)
+      console.log(Subtotal)
+
+      $.ajax({
+        url:"/checkoutpost",
+        method:"post",
+        data:{
+          total:total,
+          subTotal:Subtotal,
+          delCost:Delivery
+        }
+      }).done((val)=>{
+         window.location.href = "/checkout";
+      })
+
+     }
+// href="/checkout" 
+     
   
 </script>
 </div>

@@ -327,6 +327,9 @@ const cartAll = async (req, res) => {
     if (req.session.userData) {
       const userID = req.session.userData;
       const user = await User.findById(userID._id);
+      // cart id
+      const cId = await Cart.findOne({ user: user._id }).select("_id").lean();
+      req.session.cartId = cId?._id;
       const findCart = await Cart.findOne({ user: user._id })
         .populate("product.productId")
         .lean();
@@ -373,7 +376,7 @@ const cartAll = async (req, res) => {
       res.send("im sorry no user data");
     }
   } catch (error) {
-    console.log(error.message);
+    res.json({ message: error.message });
   }
 };
 
@@ -489,8 +492,46 @@ const increment = async (req, res) => {
 };
 
 // checkout controller
-const checkoutController = (req, res) => {
-  res.render("checkout", { user: true, userLogged: true });
+const checkoutController = async (req, res) => {
+  try {
+    let cartAmt = req.session.cartAmt;
+    const uId = req.session.userId;
+    const uData = req.session.userData;
+    const addressData = await User.findById(uId).select("address").lean();
+
+    if (addressData?.address.length > 0) {
+      const singleAddress = addressData?.address[0];
+
+      const { name, phone, address, city, state, postalCode, country } =
+        singleAddress;
+      const { email } = uData;
+
+      res.render("checkout", {
+        user: true,
+        userLogged: true,
+        cartTot: cartAmt,
+        name,
+        phone,
+        address,
+        city,
+        state,
+        postalCode,
+        country,
+        email,
+      });
+    } else {
+      res.send("create an address");
+    }
+  } catch (error) {
+    res.send(error);
+  }
+};
+
+// redirecting and saving cart info to the session
+const checkoutControllerPost = (req, res) => {
+  let val = req.body;
+  req.session.cartAmt = val;
+  res.redirect("/checkout");
 };
 
 // contact controller
@@ -512,4 +553,5 @@ module.exports = {
   removeitemwishlist,
   decrement,
   increment,
+  checkoutControllerPost,
 };
