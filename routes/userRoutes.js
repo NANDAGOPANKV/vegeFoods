@@ -3,7 +3,6 @@ const express = require("express");
 // controllers import
 const {
   userLogin,
-  userSignUp,
   userOtp,
   userSignUpChecker,
   userSignIn,
@@ -11,110 +10,113 @@ const {
   forgotPassword,
   forgotPasswordPost,
   fotpcheck,
+  allProducts,
+  findProductByCategory,
+  signUpController,
+  signOutController,
 } = require("../controllers/userControeller/userControeller");
+
+// route controllers
+const {
+  homeController,
+  aboutController,
+  allProductsController,
+  wishlistController,
+  cartController,
+  checkoutController,
+  contactController,
+  cartAll,
+  removeItemFromCart,
+  wishlist,
+  removeitemwishlist,
+  decrement,
+  increment,
+  checkoutControllerPost,
+} = require("../controllers/userControeller/componentsController/allControllers");
+
+// middlewars
+const { isUserLoggedIn } = require("../middlewares/isUserLogged");
+const { noEntryAfterSignIn } = require("../middlewares/noEntryAfterSignIn");
+const {
+  editor,
+  profileController,
+} = require("../controllers/userControeller/profileController");
+const {
+  addressController,
+  createAddressController,
+  showAddressController,
+} = require("../controllers/userControeller/addressController");
+
+const {
+  placeOrderController,
+  successPage,
+  myOrdersController,
+  cartDetailedItem,
+} = require("../controllers/userControeller/orderController");
 
 const userRouter = express();
 
 // view engine setup
 userRouter.set("view engine", "hbs");
 userRouter.set("views", "./views/user");
-
-// middlewars
-const isUserLoggedIn = (req, res, next) => {
-  if (req.session.userLoggedIn) {
-    next();
-  } else {
-    res.redirect("/signin");
-  }
-};
-// no entry after sign in
-function noEntryAfterSignIn(req, res, next) {
-  if (req.session.userLoggedIn) {
-    res.redirect("/");
-  } else {
-    next();
-  }
-}
-
 // home
-userRouter.get("/", (req, res) => {
-  if (req.session.userLoggedIn) {
-    res.render("home", { user: true, userLogged: true });
-  } else {
-    res.render("home", { user: true });
-  }
-});
-
+userRouter.get("/", homeController);
 // about
-userRouter.get("/about", (req, res) => {
-  if (req.session.userLoggedIn) {
-    res.render("about", { user: true, userLogged: true });
-  } else {
-    res.render("about", { user: true });
-  }
-});
-
+userRouter.get("/about", aboutController);
 // shop
-userRouter.get("/shop", (req, res) => {
-  if (req.session.userLoggedIn) {
-    res.render("shop", { user: true, userLogged: true });
-  } else {
-    res.render("shop", { user: true });
-  }
-});
-
-// wishlist
-userRouter.get("/wishlist", isUserLoggedIn, (req, res) => {
-  res.render("wishlist", { user: true, userLogged: true });
-});
-
+userRouter.get("/shop", allProducts);
+// list of products by category
+userRouter.get("/categoryProduct", isUserLoggedIn, findProductByCategory);
 // single Product
-userRouter.get("/product", isUserLoggedIn, (req, res) => {
-  res.render("singleProduct", { user: true, userLogged: true });
-});
-
+userRouter.get("/product", isUserLoggedIn, allProductsController);
+// wishlist
+userRouter.get("/wishlist", isUserLoggedIn, wishlist);
+userRouter.post("/addwishlist", isUserLoggedIn, wishlistController);
+userRouter.post("/removeitemwishlist", isUserLoggedIn, removeitemwishlist);
 // cart
-userRouter.get("/cart", isUserLoggedIn, (req, res) => {
-  res.render("cart", { user: true, userLogged: true });
-});
-
-// checkout
-userRouter.get("/checkout", isUserLoggedIn, (req, res) => {
-  res.render("checkout", { user: true, userLogged: true });
-});
-
+// add to cart
+userRouter.post("/cartp", isUserLoggedIn, cartController);
+// show cart items
+userRouter.get("/cart", isUserLoggedIn, cartAll);
+// decrement
+userRouter.patch("/pdecriment", decrement);
+// increment
+userRouter.patch("/pincrement", increment);
+// remove one item from cart
+userRouter.post("/removeitemcart", removeItemFromCart);
+// checkout -----------------take the value
+userRouter.get("/checkout", isUserLoggedIn, checkoutController);
+userRouter.post("/checkoutpost", checkoutControllerPost);
+userRouter.post("/orderSet", placeOrderController);
+// order success page
+userRouter.get("/orderSuccess", isUserLoggedIn, successPage);
+// order history/all orders
+userRouter.get("/myorders", isUserLoggedIn, myOrdersController);
+// single order details page
+userRouter.get("/orderDetails",cartDetailedItem);
 // profile
-userRouter.get("/profile", isUserLoggedIn, (req, res) => {
-  const data = req.session.userData;
-  res.render("profile", { user: true, userLogged: true, data });
-});
-
+userRouter.get("/profile", isUserLoggedIn, profileController);
+// edit profile
+userRouter.post("/editProfile", editor);
+// address
+userRouter.get("/address", isUserLoggedIn, showAddressController);
+// address page create
+userRouter.get("/createAddress", isUserLoggedIn, addressController);
+userRouter.post("/address", createAddressController);
 // contact
-userRouter.get("/contact", isUserLoggedIn, (req, res) => {
-  res.render("contact", { user: true, userLogged: true });
-});
-
+userRouter.get("/contact", isUserLoggedIn, contactController);
 // otp
 userRouter.get("/otp", noEntryAfterSignIn, userOtp);
-
 // sign In
 userRouter.get("/signin", noEntryAfterSignIn, userLogin);
 userRouter.post("/signin", userSignIn);
 userRouter.post("/otpData", otpDataFunction);
-
 // sign Up
-userRouter.get("/signup", noEntryAfterSignIn, (req, res) => {
-  console.log(req.body);
-  res.render("signUp", { auth: true });
-});
+userRouter.get("/signup", noEntryAfterSignIn, signUpController);
 // sign Up post
 userRouter.post("/signup", userSignUpChecker);
 // sign out
-userRouter.get("/signout", (req, res) => {
-  req.session.destroy();
-  res.redirect("/");
-});
-
+userRouter.get("/signout", signOutController);
 // forgot password
 userRouter.get("/forgotpassword", forgotPassword);
 userRouter.post("/forgotpassword", forgotPasswordPost);
