@@ -31,6 +31,7 @@ const {
   removeitemwishlist,
   decrement,
   increment,
+  checkoutControllerPost,
 } = require("../controllers/userControeller/componentsController/allControllers");
 
 // middlewars
@@ -40,6 +41,18 @@ const {
   editor,
   profileController,
 } = require("../controllers/userControeller/profileController");
+const {
+  addressController,
+  createAddressController,
+  showAddressController,
+} = require("../controllers/userControeller/addressController");
+
+const {
+  placeOrderController,
+  successPage,
+  myOrdersController,
+  cartDetailedItem,
+} = require("../controllers/userControeller/orderController");
 
 const userRouter = express();
 
@@ -71,12 +84,25 @@ userRouter.patch("/pdecriment", decrement);
 userRouter.patch("/pincrement", increment);
 // remove one item from cart
 userRouter.post("/removeitemcart", removeItemFromCart);
-// checkout
+// checkout -----------------take the value
 userRouter.get("/checkout", isUserLoggedIn, checkoutController);
+userRouter.post("/checkoutpost", checkoutControllerPost);
+userRouter.post("/orderSet", placeOrderController);
+// order success page
+userRouter.get("/orderSuccess", isUserLoggedIn, successPage);
+// order history/all orders
+userRouter.get("/myorders", isUserLoggedIn, myOrdersController);
+// single order details page
+userRouter.get("/orderDetails",cartDetailedItem);
 // profile
 userRouter.get("/profile", isUserLoggedIn, profileController);
 // edit profile
 userRouter.post("/editProfile", editor);
+// address
+userRouter.get("/address", isUserLoggedIn, showAddressController);
+// address page create
+userRouter.get("/createAddress", isUserLoggedIn, addressController);
+userRouter.post("/address", createAddressController);
 // contact
 userRouter.get("/contact", isUserLoggedIn, contactController);
 // otp

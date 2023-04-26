@@ -1,0 +1,42 @@
+<!-- Orders Table Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="bg-light rounded h-100 p-4">
+        <h3 class="mb-4">Your Order History</h3>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr class="w-100 text-center">
+                <th scope="col">Numbers</th>
+                <th scope="col">Time</th>
+                <th scope="col">Order Id</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Status</th>
+                <th scope="col">Payment Method</th>
+                <th scope="col">Order Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each allMyOrders}}
+                <tr class="w-100 text-center">
+                  <th scope="row">{{@index}}</th>
+                  <td>{{date}}</td>
+                  <td>{{_id}}</td>
+                  <td>{{this.address.phone}}</td>
+                  <td>{{this.orderStatus}}</td>
+                  <td>{{this.paymentMethod}}</td>
+                  <td><button
+                      class="btn btn-success"
+                      onclick="location.href='orderDetails?id={{_id}}'"
+                    >view</button></td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Orders Table End -->
