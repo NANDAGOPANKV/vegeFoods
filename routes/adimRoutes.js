@@ -21,6 +21,7 @@ const {
   allProfilesController,
   orderDetaild,
   orderStatus,
+  acceptReturn,
 } = require("../controllers/adminController/adminController");
 
 const {
@@ -76,6 +77,8 @@ adminRoute.get("/orderlist", isAdminLoggedIn, orderList);
 adminRoute.get("/aorderDetails", isAdminLoggedIn, orderDetaild);
 // order status edit
 adminRoute.post("/status", orderStatus);
+// confirm return
+adminRoute.get("/acceptReturn", isAdminLoggedIn, acceptReturn);
 // ----------------------products Products
 
 // all product

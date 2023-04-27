@@ -68,31 +68,7 @@
                 <div class="row g-4">
                     <div class="col-12">
                         <div class="bg-light rounded h-100 p-4">
-<<<<<<< HEAD
-                            <h6 class="mb-4">Responsive Table</h6>
-                            <div class="table-responsive">
-                                <table class="table  table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col"> Name</th> 
-                                            <th scope="col">Email</th>
-                                            <th scope="col">Mobile</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Payment Method</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {{#each users}}
-                                        <tr>
-                                            <th scope="row">{{@index}}</th>
-                                            <td>{{name}}</td> 
-                                            <td>{{email}}</td>
-                                            <td>{{phone}}</td>
-                                            <td>{{status}}</td>
-                                            <td>{{status}}</td>
-                                             
-=======
+ 
                             <h6 class="mb-4">All Orders</h6>
                             <div class="table-responsive">
                                 <table class="table  table-hover">
@@ -104,7 +80,8 @@
                                             <th scope="col">Mobile</th>
                                             <th scope="col">Order Status</th>
                                             <th scope="col">Payment Method</th>
-                                             <th scope="col">Order Details</th>
+                                            <th scope="col">Order Details</th> 
+                                            
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -116,9 +93,12 @@
                                             <td>{{address.phone}}</td>
                                             <td>{{orderStatus}}</td>
                                             <td>{{paymentMethod}}</td>
-                                             <td><button class="btn btn-success"
-                                             onclick="location.href='aorderDetails?id={{_id}}'">view</button></td>
->>>>>>> b2
+                                            <td><button class="btn btn-success"
+                                             onclick="location.href='aorderDetails?id={{_id}}'">view</button></td> 
+                                               {{#if (isEqual orderStatus "return request")}}
+                                            <td><button class="btn btn-danger"
+                                             onclick="location.href='acceptReturn?id={{_id}}'"><span>accept return</span></button></td>
+                                            {{/if}}
                                         </tr>
                                         {{/each}}
                                     </tbody>
@@ -133,13 +113,4 @@
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
-    <!-- JavaScript Libraries -->
-    
-<<<<<<< HEAD
-</div>
-
- 
-=======
-</div> 
-  
->>>>>>> b2
+    <!-- JavaScript Libraries --> 

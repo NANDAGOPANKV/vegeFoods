@@ -188,14 +188,14 @@ const orderList = async (req, res) => {
   const allOrders = await Orders.find().lean();
   res.render("ordersList", { admin: true, admindash: true, allOrders });
 };
+
 // order detail page
 const orderDetaild = async (req, res) => {
   const oId = req.query.id;
   // find order by id
   let order = await Orders.find({ _id: oId }).lean();
   const addressField = await Orders.find({ _id: oId }).select("address").lean();
-
-  console.log(order);
+ 
   const [{ paymentMethod, _id, orderStatus }] = order;
   const [{ name, email, phone, address }] = addressField.map(
     (data) => data?.address
@@ -245,6 +245,18 @@ const orderStatus = async (req, res) => {
   res.redirect("/orderlist");
 };
 
+// accept return
+const acceptReturn = async (req, res) => {
+  let status = "return accepted";
+  let id = req.query.id;
+  const item = await Orders.findOneAndUpdate(
+    { _id: id },
+    { orderStatus: status },
+    { new: true }
+  );
+  res.redirect("/orderlist");
+};
+
 // single product view controller
 const singleProductView = (req, res) => {
   const name = "ds";
@@ -274,4 +286,5 @@ module.exports = {
   signUpController,
   signOutController,
   orderStatus,
+  acceptReturn,
 };

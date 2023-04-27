@@ -90,6 +90,7 @@
                                         <form action="/status" method="post">
                                         <select class="form-select form-select-sm"  name="status" aria-label=".form-select-sm example" style="width: 100%;height:38px; border-color:gray; border-radius: 3px">
                                         <option value="{{orderStatus}}">{{orderStatus}}</option>
+                                        <option value="ordered">ordered</option>
                                         <option value="shipped">shipped</option>
                                         <option value="delivered">delivered</option>
                                         </select>
@@ -100,13 +101,13 @@
                                 </div>
                                 </div>
                                 <div class="w-100 h-50 ">
-                                 <span class="p-3">Product Details</span>
+                                  
                                       <!-- Sale & Revenue Start -->
             <div class="container-fluid pt-4 px-4">
                 <div class="row g-4">
                     <div class="col-12">
-                        <div class="bg-light rounded h-100 p-4">
-                            <h6 class="mb-4">Responsive Table</h6>
+                        <div class="bg-light rounded h-100 p-4"> 
+                            <span class="p-3">Product Details</span>
                             <div class="table-responsive">
                                 <table class="table  table-hover">
                                     <thead>
@@ -155,11 +156,4 @@
 
     <!-- JavaScript Libraries -->
     
-</div> 
-
-<script>
-    function changeStatus(id,status){
-        console.log(id)
-        console.log(status)
-    }
-</script>
+</div>  

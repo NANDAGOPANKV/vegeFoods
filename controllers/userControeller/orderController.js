@@ -85,9 +85,8 @@ const myOrdersController = async (req, res) => {
 
   const allMyOrders = await Order.find({ user: uId }).lean();
 
-  console.log(allMyOrders);
   // check status for return
-  const checkStatus = allMyOrders?.map((data) => data?.orderStatus)
+  const checkStatus = allMyOrders?.map((data) => data?.orderStatus);
 
   // console.log(checkStatus);
   // Output: 'ordered'
@@ -113,7 +112,6 @@ const myOrdersController = async (req, res) => {
 };
 
 // card for order detaild page
-
 const cartDetailedItem = async (req, res) => {
   const oId = req.query.id;
   const uId = req.session.userId;
@@ -149,9 +147,40 @@ const cartDetailedItem = async (req, res) => {
   });
 };
 
+// return order
+const returnOrder = async (req, res) => {
+  const oId = req.query.id;
+  // item status changer
+  const returned = "return request";
+  // find item with order id and update status
+  const orderItem = await Order.findOneAndUpdate(
+    { _id: oId },
+    { orderStatus: returned },
+    { new: true }
+  );
+
+  res.redirect("/myorders");
+};
+
+// canel order
+const orderCancel = async (req, res) => {
+  const id = req.query.id;
+  const status = "order canceled";
+  const order = await Order.findOneAndUpdate(
+    { _id: id },
+    { orderStatus: status },
+    { new: true }
+  );
+
+  res.redirect("/myorders")
+
+};
+
 module.exports = {
+  returnOrder,
   placeOrderController,
   successPage,
   myOrdersController,
   cartDetailedItem,
+  orderCancel,
 };

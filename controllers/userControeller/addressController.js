@@ -13,8 +13,7 @@ const showAddressController = async (req, res) => {
   const uId = uData._id;
   try {
     // retrive addres from user
-    const uAddress = await User.findById(uId).lean();
-    res.send(uAddress);
+    const uAddress = await User.findById(uId).lean(); 
 
     if (uAddress?.address?.length == 0) {
       res.redirect("/createAddress");

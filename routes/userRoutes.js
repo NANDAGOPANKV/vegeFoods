@@ -52,6 +52,8 @@ const {
   successPage,
   myOrdersController,
   cartDetailedItem,
+  returnOrder,
+  orderCancel,
 } = require("../controllers/userControeller/orderController");
 
 const userRouter = express();
@@ -84,22 +86,26 @@ userRouter.patch("/pdecriment", decrement);
 userRouter.patch("/pincrement", increment);
 // remove one item from cart
 userRouter.post("/removeitemcart", removeItemFromCart);
-// checkout -----------------take the value
+// checkout -----------------take the value and order
 userRouter.get("/checkout", isUserLoggedIn, checkoutController);
 userRouter.post("/checkoutpost", checkoutControllerPost);
 userRouter.post("/orderSet", placeOrderController);
+// return order
+userRouter.get("/returnItem", isUserLoggedIn, returnOrder);
 // order success page
 userRouter.get("/orderSuccess", isUserLoggedIn, successPage);
 // order history/all orders
 userRouter.get("/myorders", isUserLoggedIn, myOrdersController);
 // single order details page
 userRouter.get("/orderDetails", isUserLoggedIn, cartDetailedItem);
+// cancel order
+userRouter.get("/cancelOrder", isUserLoggedIn, orderCancel);
 // profile
 userRouter.get("/profile", isUserLoggedIn, profileController);
 // edit profile
 userRouter.post("/editProfile", editor);
 // address
-userRouter.get("/address", isUserLoggedIn, showAddressController);
+userRouter.get("/myaddress", isUserLoggedIn, showAddressController);
 // address page create
 userRouter.get("/createAddress", isUserLoggedIn, addressController);
 userRouter.post("/address", createAddressController);

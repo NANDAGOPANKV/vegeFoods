@@ -16,7 +16,6 @@
                 <th scope="col">Payment Method</th>
                 <th scope="col">Order Details</th> 
                 <th scope="col">Order Status</th>   
-               
               </tr>
             </thead>
             <tbody>
@@ -34,16 +33,28 @@
                     >view</button></td> 
                     {{#if (isEqual orderStatus "delivered")}}
                     <td><button
-                        class="btn btn-success"
+                        class="btn btn-primary"
                         onclick="location.href='returnItem?id={{_id}}'"
                       >Return</button></td>
                       {{else}}
-                    <td><button
-                        class="btn btn-success"
+                      {{#if (isEqual orderStatus "return")}} 
+                      <td><button
+                        class="btn btn-info text-white"
+                      >Returned</button></td>
+                      {{else}}
+                      {{#if (isEqual orderStatus "order canceled")}}
+                      <td><button
+                        class="btn btn-danger"
+                        onclick="location.href='/myorders"
+                      >Canceled</button></td>
+                      {{else}}
+                      <td><button
+                        class="btn btn-danger"
                         onclick="location.href='cancelOrder?id={{_id}}'"
                       >Cancel</button></td>
                       {{/if}}
-                   
+                      {{/if}}
+                      {{/if}}
                 </tr>
               {{/each}}
             </tbody>
