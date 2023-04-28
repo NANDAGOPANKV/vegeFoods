@@ -289,6 +289,8 @@
       id:id
     }
   }).done((val)=>{
+    if(val.success == true){
+      console.log('stoke')
     console.log(val)
     if(val.pAA){
     Swal.fire({
@@ -307,6 +309,16 @@
     timer: 1750
   })
   }
+    }else{
+      console.log('out of stoke')
+        Swal.fire({
+    position: 'top-end',
+    icon: 'dark',
+    title: "OUT OF STOKE",
+    showConfirmButton: false,
+    timer: 1750
+  })
+    }
   })
   }
   </script>

@@ -5,6 +5,7 @@ const Cart = require("../../models/adminSchema/addToCartSchema");
 const Products = require("../../models/adminSchema/productsSchema");
 // rozar pay
 const Rozarpay = require("razorpay");
+const { log } = require("console");
 
 let instance = new Rozarpay({
   key_id: "rzp_test_0y2DtbdwtwS8LD",
@@ -15,6 +16,8 @@ let instance = new Rozarpay({
 const placeOrderController = async (req, res) => {
   const cartAmt = req.session.cartAmt;
   const uId = req.session.userData;
+  const userId = req.session.userId;
+
   const orderDetailsObject = req.body;
 
   const orderDetails = Object.fromEntries(
@@ -22,7 +25,7 @@ const placeOrderController = async (req, res) => {
       key.replace(/^value\[(.*)\]$/, "$1"),
       value,
     ])
-  );
+  );   
 
   const cId = req.session.cartId;
 
@@ -65,6 +68,7 @@ const placeOrderController = async (req, res) => {
     req.session.userOrderData = allData;
 
     if (detailsObj?.orderMethod === "COD") {
+      let qty = allCartItems?.product.map((data) => data?.quantity);
       const ordersListing = new Order({
         user: uId,
         products: allCartItems?.product,
@@ -85,12 +89,31 @@ const placeOrderController = async (req, res) => {
         orderStatus: pMethod,
         date: Date.now(),
       });
-
+      // saving order details in orders
       await ordersListing.save();
-      res.json({ orderSuccess: true });
+      // decrease stock from product
+      const products = await Products.find();
+
+      const cart = await Cart.findOne({ user: userId });
+      cart.product.forEach(async (element) => {
+        products.forEach(async (elem, index) => {
+          if (element.productId == elem.id) {
+            const productStock = products[index].stock;
+            await Products.findOneAndUpdate(
+              { _id: elem?._id },
+              { $set: { stock: productStock - element.quantity } },
+              { new: true }
+            );
+          }
+        });
+      });
+      console.log("reached");
+      await Cart.updateOne({ user: userId }, { $set: { product: [] } });
+      res.json({ redirectUrl: "/orderSuccess" });
     } else {
-      req.session.paymentMethod = "online payment";
       // online payment
+      let qty = allCartItems?.product.map((data) => data?.quantity);
+      req.session.paymentMethod = "online payment";
       const oid = ordersList?._id;
       const { v4: uuidv4 } = require("uuid");
 
@@ -119,7 +142,7 @@ const placeOrderController = async (req, res) => {
 
 // order success page
 const successPage = (req, res) => {
-  res.render("orderSuccess");
+  res.render("orderSuccess", { user: true, userLogged: true });
 };
 
 // taking all orders
@@ -145,7 +168,6 @@ const myOrdersController = async (req, res) => {
   let d = "delivered";
 
   res.render("myOrders", {
-   
     user: true,
     name: "Nandagopan",
     allMyOrders,
@@ -173,7 +195,7 @@ const cartDetailedItem = async (req, res) => {
   let allMyOrdersProducts = await Order.find({ _id: oId }).select("products");
   allMyOrdersProducts = allMyOrdersProducts
     .map((data) => data?.products)
-    .flat(Infinity); 
+    .flat(Infinity);
   // let daate = new Date().toLocaleDateString();
 
   res.render("orderItemSingle", {
@@ -223,6 +245,7 @@ const verifyPayment = async (req, res) => {
   console.log("here");
   const paymentDetails = req.body;
   const uId = req.session.userData;
+  const userId = req.session.userId;
 
   let hmac = crypto.createHmac("sha256", "wd0kZaATnRxQV6q9ljx5QrYq");
   hmac.update(
@@ -255,8 +278,6 @@ const verifyPayment = async (req, res) => {
       productData: orderData?.productData,
     };
 
-    console.log(detailsObj);
-
     // order saving
     const ordersListing = new Order({
       user: uId,
@@ -281,6 +302,23 @@ const verifyPayment = async (req, res) => {
     });
 
     await ordersListing.save();
+
+    const products = await Products.find();
+
+    const cart = await Cart.findOne({ user: userId });
+    cart.product.forEach(async (element) => {
+      products.forEach(async (elem, index) => {
+        if (element.productId == elem.id) {
+          const productStock = products[index].stock;
+          await Products.findOneAndUpdate(
+            { _id: elem?._id },
+            { $set: { stock: productStock - element.quantity } },
+            { new: true }
+          );
+        }
+      });
+    });
+    await Cart.updateOne({ user: userId }, { $set: { product: [] } });
 
     res.json({ redirectUrl: "/orderSuccess" });
   } else {

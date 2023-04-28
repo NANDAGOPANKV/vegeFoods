@@ -389,12 +389,12 @@
       data: {
         value:data
       }, 
-      success: function(data){
+      success: function(data2){
         // Do something with the response data here 
-        if(data.orderSuccess == true){
+        if(data2.orderSuccess == true){
           window.location.href = "/orderSuccess"
         }else{ 
-          rozarpayPayment(data)
+          rozarpayPayment(data2,data)
         }
       },
       error: function(xhr, textStatus, errorThrown){
@@ -404,8 +404,9 @@
   });
 });
 
-function rozarpayPayment(val){
+function rozarpayPayment(val,data){
   console.log("ss", val)
+  console.log("ss", data)
 
   if(val.RozarpayDetails){
 
@@ -428,23 +429,24 @@ function rozarpayPayment(val){
     verifyPayment(response,order)
     },  
     "prefill": {
-        "name": "Gaurav Kumar", //your customer's name
-        "email": "gaurav.kumar@example.com",
-        "contact": "9000090000"
+        "name": data.name, //your customer's name
+        "email": data.email,
+        "contact": data.phone,
     },
     "notes": {
         "address": "Razorpay Corporate Office"
     },
     "theme": {
-        "color": "#3399cc"
+        "color": "#82ae46"
     }
 };
 
   // rozarpay
  var rzp1 = new Razorpay(options);
  rzp1.open()
-}else{
-  console.log(val)
+}else{ 
+  const req = val.redirectUrl;
+  window.location.href = req;
 }
 }
 
@@ -453,7 +455,7 @@ function rozarpayPayment(val){
     url: "/verifyPayment",
     method: "POST",
     data: { order, payment },
-  }).done(function(response){
+  }).done(function(response){ 
     const req = response.redirectUrl;
     window.location.href = req;
   })

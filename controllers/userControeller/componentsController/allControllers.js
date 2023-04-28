@@ -202,7 +202,7 @@ const removeitemwishlist = async (req, res) => {
 
 // cart controller add to cart
 
-const cartController = async (req, res) => {  
+const cartController = async (req, res) => {
   try {
     if (req.session.userData) {
       const userDataSession = req.session.userData;
@@ -210,74 +210,106 @@ const cartController = async (req, res) => {
       const userId = userDataSession._id;
       const userData = await User.findById(userId);
       const productData = await Product.findById(productId);
-      const userCart = await Cart.findOne({ user: userId });
+      if (productData.stock == 0) {
+        res.json({ success: false });
+      } else {
+        const userCart = await Cart.findOne({ user: userId });
 
-      const cartData = await Cart.findOne({ user: userId })
-        .populate("product.productId")
-        .lean();
+        const cartData = await Cart.findOne({ user: userId })
+          .populate("product.productId")
+          .lean();
 
-      if (cartData && cartData.product) {
-        const findQuantity = cartData.product.find((value) => {
-          return value.productId._id == productId;
-        });
+        if (cartData && cartData.product) {
+          const findQuantity = cartData.product.find((value) => {
+            return value.productId._id == productId;
+          });
 
-        //if user cart available
-        if (userCart) {
-          const productExistIndex = userCart.product.findIndex(
-            (product) => product.productId == productId
-          );
+          //if user cart available
+          if (userCart) {
+            const productExistIndex = userCart.product.findIndex(
+              (product) => product.productId == productId
+            );
 
-          if (productExistIndex >= 0) {
-            if (
-              productData.stock == findQuantity.quantity ||
-              productData.stock < findQuantity.quantity
-            ) {
-              res.json({
-                dsc: `Sorry We Only Have ${productData?.stock} Stock's`,
-              });
+            if (productExistIndex >= 0) {
+              if (
+                productData.stock == findQuantity.quantity ||
+                productData.stock < findQuantity.quantity
+              ) {
+                res.json({
+                  dsc: `Sorry We Only Have ${productData?.stock} Stock's`,
+                  success: true,
+                });
+              } else {
+                await Cart.findOneAndUpdate(
+                  { user: userId, "product.productId": productId },
+                  { $inc: { "product.$.quantity": 1 } }
+                );
+
+                // product added to the cart again
+
+                const findcart = await Cart.findOne({
+                  user: userId,
+                  "product.productId": productId,
+                });
+                const find = findcart.product.find((value) => {
+                  return value.productId == productId;
+                });
+
+                await Cart.findOneAndUpdate(
+                  { user: userId, "product.productId": productId },
+                  {
+                    $set: {
+                      "product.$.totalPrice": find.quantity * find.price,
+                    },
+                  }
+                ).then((value) => {
+                  console.log("--out put--");
+                });
+                res.json({ dsc: "product added again", success: true });
+              }
             } else {
               await Cart.findOneAndUpdate(
-                { user: userId, "product.productId": productId },
-                { $inc: { "product.$.quantity": 1 } }
+                { user: userId },
+                {
+                  $push: {
+                    product: {
+                      productId: productId,
+
+                      image: productData.image,
+                      name: productData.name,
+
+                      price: productData.price,
+                      totalPrice: productData.price,
+                      discoutPrice: productData.discoutPrice,
+                    },
+                  },
+                }
               );
-
-              // product added to the cart again
-
-              const findcart = await Cart.findOne({
-                user: userId,
-                "product.productId": productId,
+              res.json({
+                pAA: "product succesfully added to the cart",
+                success: true,
               });
-              const find = findcart.product.find((value) => {
-                return value.productId == productId;
-              });
-
-              await Cart.findOneAndUpdate(
-                { user: userId, "product.productId": productId },
-                { $set: { "product.$.totalPrice": find.quantity * find.price } }
-              ).then((value) => {
-                console.log("--out put--");
-              });
-              res.json({ dsc: "product added again" });
             }
           } else {
-            await Cart.findOneAndUpdate(
-              { user: userId },
-              {
-                $push: {
-                  product: {
-                    productId: productId,
- 
-                    image: productData.image,
-                    name: productData.name,
- 
-                    price: productData.price,
-                    totalPrice: productData.price,
-                    discoutPrice: productData.discoutPrice,
-                  },
+            console.log("here");
+            const data = new Cart({
+              user: userId,
+              product: [
+                {
+                  productId: productId,
+                  image: productData.image,
+                  name: productData.name,
+                  price: productData.price,
+                  totalPrice: productData.price,
+                  discoutPrice: productData.discoutPrice,
                 },
-              }
-            );
-            res.json({ pAA: "product succesfully added to the cart" });
+              ],
+            });
+
+            await data.save();
+            res.render("cart", {
+              user: true,
+            });
           }
         } else {
           console.log("here");
@@ -285,9 +317,9 @@ const cartController = async (req, res) => {
             user: userId,
             product: [
               {
-                productId: productId, 
+                productId: productId,
                 image: productData.image,
-                name: productData.name, 
+                name: productData.name,
                 price: productData.price,
                 totalPrice: productData.price,
                 discoutPrice: productData.discoutPrice,
@@ -299,28 +331,8 @@ const cartController = async (req, res) => {
           res.render("cart", {
             user: true,
           });
+          // res.json({ failed: "Cart data not found" });
         }
-      } else {
-        console.log("here");
-        const data = new Cart({
-          user: userId,
-          product: [
-            {
-              productId: productId, 
-              image: productData.image,
-              name: productData.name,
-              price: productData.price,
-              totalPrice: productData.price,
-              discoutPrice: productData.discoutPrice,
-            },
-          ],
-        });
-
-        await data.save();
-        res.render("cart", {
-          user: true,
-        });
-        // res.json({ failed: "Cart data not found" });
       }
     } else {
       res.json({ failed: "signup please" });
@@ -342,7 +354,7 @@ const cartAll = async (req, res) => {
       const findCart = await Cart.findOne({ user: user._id })
         .populate("product.productId")
         .lean();
- 
+
       const findCartItems = await Cart.findOne({ user: user._id });
       // all products
       let products = findCart?.product;
