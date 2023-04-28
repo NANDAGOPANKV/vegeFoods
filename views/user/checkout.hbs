@@ -22,7 +22,7 @@
   <section class="ftco-section">
     <div class="container">
       <div class="row justify-content-center">
-        <form action="/orderSet" method="post" class="billing-form w-100" >
+       <form action="" id="place-order" class="billing-form w-100" >
           <div class="col-6 col-xl-7 ftco-animate">
             <h3 class="mb-4 billing-heading">Billing Details</h3>
             <div class="row align-items-end">
@@ -149,7 +149,7 @@
                   <h3 class="billing-heading mb-4">Cart Total</h3>
                   <p class="d-flex">
                     <span>Subtotal</span>
-                    <span>&#x20B9;{{cartTot.subTotal}}</span>
+                    <span id="subTotal" >&#x20B9;{{cartTot.subTotal}}</span>
                   </p>
                   <p class="d-flex">
                     <span>Delivery</span>
@@ -162,7 +162,7 @@
                   <hr />
                   <p class="d-flex total-price">
                     <span>Total</span>
-                    <span>&#x20B9;{{cartTot.total}}</span>
+                    <span id="total" >&#x20B9;{{cartTot.total}}</span>
                   </p>
                 </div>
               </div>
@@ -365,4 +365,99 @@
         stroke="#F96D00"
       ></circle></svg></div>
 
-</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+      <script>
+        $(document).ready(function() {
+  $("#place-order").submit(function(event) {
+    // Prevent the default form submission
+    event.preventDefault();
+
+    // Get the form data using serializeArray()
+    var formData = $(this).serializeArray();
+    let total = document.getElementById("subTotal").value
+    // Convert the form data to a JSON object
+    var data = {};
+    $(formData ).each(function(index, obj){
+      data[obj.name] = obj.value;
+    });
+    // Send the form data using AJAX
+    console.log(data)
+    $.ajax({
+      url: "/orderSet",
+      method: "POST",
+      data: {
+        value:data
+      }, 
+      success: function(data){
+        // Do something with the response data here 
+        if(data.orderSuccess == true){
+          window.location.href = "/orderSuccess"
+        }else{ 
+          rozarpayPayment(data)
+        }
+      },
+      error: function(xhr, textStatus, errorThrown){
+        // Handle errors here
+      }
+    });
+  });
+});
+
+function rozarpayPayment(val){
+  console.log("ss", val)
+
+  if(val.RozarpayDetails){
+
+  // rozarpay
+  let order = val.RozarpayDetails
+  console.log(order.amount)
+  var options = {
+    "key": "rzp_test_0y2DtbdwtwS8LD", // Enter the Key ID generated from the Dashboard
+    "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "vegeFoods", //your business name
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "callback_url": "https://eneqd3r9zrjok.x.pipedream.net/",
+    "handler": function (response){
+   // alert(response.razorpay_payment_id);
+   // alert(response.razorpay_order_id);
+   // alert(response.razorpay_signature) 
+    verifyPayment(response,order)
+    },  
+    "prefill": {
+        "name": "Gaurav Kumar", //your customer's name
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+
+  // rozarpay
+ var rzp1 = new Razorpay(options);
+ rzp1.open()
+}else{
+  console.log(val)
+}
+}
+
+ function verifyPayment(payment, order) {
+  $.ajax({
+    url: "/verifyPayment",
+    method: "POST",
+    data: { order, payment },
+  }).done(function(response){
+    const req = response.redirectUrl;
+    window.location.href = req;
+  })
+}
+
+</script>
+</div> 

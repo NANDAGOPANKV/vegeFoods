@@ -1,12 +1,29 @@
+const crypto = require("crypto");
+
 const Order = require("../../models/adminSchema/orderSchema");
 const Cart = require("../../models/adminSchema/addToCartSchema");
 const Products = require("../../models/adminSchema/productsSchema");
+// rozar pay
+const Rozarpay = require("razorpay");
+
+let instance = new Rozarpay({
+  key_id: "rzp_test_0y2DtbdwtwS8LD",
+  key_secret: "wd0kZaATnRxQV6q9ljx5QrYq",
+});
 
 // order placing
 const placeOrderController = async (req, res) => {
   const cartAmt = req.session.cartAmt;
   const uId = req.session.userData;
-  const orderDetails = req.body;
+  const orderDetailsObject = req.body;
+
+  const orderDetails = Object.fromEntries(
+    Object.entries(orderDetailsObject).map(([key, value]) => [
+      key.replace(/^value\[(.*)\]$/, "$1"),
+      value,
+    ])
+  );
+
   const cId = req.session.cartId;
 
   // get cart ids with uid
@@ -16,10 +33,11 @@ const placeOrderController = async (req, res) => {
   const allCartItems = await Cart.findOne({ user: uId }).lean();
 
   const cartAll = allCartItemsIds?.product?.map((data) => data);
+  const cartId = cartAll.map((d) => d?.productId?._id).toString();
 
   const ordersExisting = await Order.findOne({ user: uId });
 
-  const ordersList = await Order.findOne({ user: uId });
+  const ordersList = await Order.findOne({ user: uId }).select("_di").lean();
 
   try {
     const detailsObj = {
@@ -38,8 +56,15 @@ const placeOrderController = async (req, res) => {
       orderMethod: orderDetails?.optradio,
     };
 
+    let pMethod = "ordered";
+
+    let productData = allCartItems?.product;
+    const allData = { ...detailsObj, pMethod, productData };
+
+    // making an copy inside session
+    req.session.userOrderData = allData;
+
     if (detailsObj?.orderMethod === "COD") {
-      let pMethod = "ordered";
       const ordersListing = new Order({
         user: uId,
         products: allCartItems?.product,
@@ -62,10 +87,29 @@ const placeOrderController = async (req, res) => {
       });
 
       await ordersListing.save();
-      res.redirect("/orderSuccess");
+      res.json({ orderSuccess: true });
     } else {
+      req.session.paymentMethod = "online payment";
       // online payment
-      res.send("online");
+      const oid = ordersList?._id;
+      const { v4: uuidv4 } = require("uuid");
+
+      // generate a unique ID for the order
+      const orderId = uuidv4();
+
+      const options = {
+        amount: detailsObj.total * 100,
+        currency: "INR",
+        receipt: orderId,
+      };
+
+      instance.orders.create(options, (err, order) => {
+        if (err) {
+          res.json({ error: err });
+        } else {
+          res.json({ RozarpayDetails: order });
+        }
+      });
     }
   } catch (error) {
     console.error(error);
@@ -101,8 +145,8 @@ const myOrdersController = async (req, res) => {
   let d = "delivered";
 
   res.render("myOrders", {
-    admindash: true,
-    admin: true,
+   
+    user: true,
     name: "Nandagopan",
     allMyOrders,
     yes,
@@ -129,8 +173,7 @@ const cartDetailedItem = async (req, res) => {
   let allMyOrdersProducts = await Order.find({ _id: oId }).select("products");
   allMyOrdersProducts = allMyOrdersProducts
     .map((data) => data?.products)
-    .flat(Infinity);
-  console.log(allMyOrdersProducts);
+    .flat(Infinity); 
   // let daate = new Date().toLocaleDateString();
 
   res.render("orderItemSingle", {
@@ -172,8 +215,78 @@ const orderCancel = async (req, res) => {
     { new: true }
   );
 
-  res.redirect("/myorders")
+  res.redirect("/myorders");
+};
 
+// verify
+const verifyPayment = async (req, res) => {
+  console.log("here");
+  const paymentDetails = req.body;
+  const uId = req.session.userData;
+
+  let hmac = crypto.createHmac("sha256", "wd0kZaATnRxQV6q9ljx5QrYq");
+  hmac.update(
+    paymentDetails["payment[razorpay_order_id]"] +
+      "|" +
+      paymentDetails["payment[razorpay_payment_id]"]
+  );
+  hmac = hmac.digest("hex");
+  if (hmac == paymentDetails["payment[razorpay_signature]"]) {
+    // change payment status
+    const paymentMethod = req.session.paymentMethod;
+    console.log("order data");
+    const orderData = req.session.userOrderData;
+
+    const detailsObj = {
+      name: orderData?.name,
+      email: orderData?.email,
+      country: orderData?.country,
+      state: orderData?.state,
+      address: orderData?.address,
+      city: orderData?.city,
+      postalCode: orderData?.postalCode,
+      phone: orderData?.phone,
+      tandc: orderData?.tandc,
+      total: orderData?.total,
+      subtTotal: orderData?.subtTotal,
+      delCost: orderData?.delCost,
+      orderMethod: orderData?.orderMethod,
+      paymentStatus: orderData?.pMethod,
+      productData: orderData?.productData,
+    };
+
+    console.log(detailsObj);
+
+    // order saving
+    const ordersListing = new Order({
+      user: uId,
+      products: detailsObj?.productData,
+      totalAmount: detailsObj.total,
+      delCost: detailsObj.delCost,
+      subtTotal: detailsObj.subtTotal,
+      address: {
+        name: detailsObj.name,
+        email: detailsObj.email,
+        country: detailsObj.country,
+        state: detailsObj.state,
+        address: detailsObj.address,
+        city: detailsObj.city,
+        postalCode: detailsObj.postalCode,
+        phone: detailsObj.phone,
+        tandc: detailsObj.tandc,
+      },
+      paymentMethod: detailsObj.orderMethod,
+      orderStatus: detailsObj.paymentStatus,
+      date: Date.now(),
+    });
+
+    await ordersListing.save();
+
+    res.json({ redirectUrl: "/orderSuccess" });
+  } else {
+    res.json({ status: "Payment Failed" });
+    console.log("payment Collapsed");
+  }
 };
 
 module.exports = {
@@ -183,4 +296,5 @@ module.exports = {
   myOrdersController,
   cartDetailedItem,
   orderCancel,
+  verifyPayment,
 };

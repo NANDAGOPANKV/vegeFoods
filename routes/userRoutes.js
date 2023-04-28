@@ -54,6 +54,7 @@ const {
   cartDetailedItem,
   returnOrder,
   orderCancel,
+  verifyPayment,
 } = require("../controllers/userControeller/orderController");
 
 const userRouter = express();
@@ -89,7 +90,9 @@ userRouter.post("/removeitemcart", removeItemFromCart);
 // checkout -----------------take the value and order
 userRouter.get("/checkout", isUserLoggedIn, checkoutController);
 userRouter.post("/checkoutpost", checkoutControllerPost);
+// payments and all the stuff's
 userRouter.post("/orderSet", placeOrderController);
+userRouter.post("/verifyPayment", verifyPayment);
 // return order
 userRouter.get("/returnItem", isUserLoggedIn, returnOrder);
 // order success page

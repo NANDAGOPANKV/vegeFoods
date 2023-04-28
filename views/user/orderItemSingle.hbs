@@ -12,6 +12,7 @@
           src="productImage/{{image.[0]}}"
           alt="Card image cap"
         />
+        <p class="text-center" >name: {{name}}</p>
       </div>
      </div>
     {{/each}}
@@ -19,7 +20,7 @@
     <div class="w-100 text-center">
       <div class="card-body">
         <h6 class="card-title">Order Id <h5>{{_id}}</h5></h6>
-        <p class="card-text"><span>Owner:
+        <p class="card-text"><span>Name:
             {{address.name}}<br />Email:
             {{address.email}}<br />Address:
             {{address.address}}<br />City:
