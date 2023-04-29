@@ -43,6 +43,13 @@ const {
 } = require("../controllers/adminController/loginControllers/allControllers");
 const { storeageFunc } = require("../middlewares/multer");
 
+const {
+  addCouponController,
+  couponPage,
+  unlisOrUnlistController,
+  removeController,
+} = require("../controllers/adminController/couponController");
+
 // multer
 const upload = multer({ storage: storeageFunc });
 // view engine setup
@@ -103,14 +110,20 @@ adminRoute.post("/changeImage", upload.array("image", 3), chengeIMG);
 // single products view
 adminRoute.get("/viewsignproduct", isAdminLoggedIn, viewSinglePage);
 // ----------------------category
-
 // all category
 adminRoute.get("/category", isAdminLoggedIn, allCategory);
 // add category
 adminRoute.post("/addcategory", addCategory);
 // list or unlist category
 adminRoute.get("/categoryStatus/:id", isAdminLoggedIn, categoryStatus);
-// ----------------------category
+// ---------------------- coupon management
+adminRoute.get("/coupon", isAdminLoggedIn, couponPage);
+// coupon post method
+adminRoute.post("/coupon", addCouponController);
+// list / unlist coupon
+adminRoute.get("/couponStatus", unlisOrUnlistController);
+// remove coupon
+adminRoute.get("/couponremove", removeController);
 
 // all profile
 adminRoute.get("/adminprofile", isAdminLoggedIn, allProfilesController);

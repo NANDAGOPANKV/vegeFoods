@@ -87,6 +87,10 @@ userRouter.patch("/pdecriment", decrement);
 userRouter.patch("/pincrement", increment);
 // remove one item from cart
 userRouter.post("/removeitemcart", removeItemFromCart);
+// apply coupon
+userRouter.post("/applyCoupon",(req,res)=>{
+  console.log(req.body);
+})
 // checkout -----------------take the value and order
 userRouter.get("/checkout", isUserLoggedIn, checkoutController);
 userRouter.post("/checkoutpost", checkoutControllerPost);

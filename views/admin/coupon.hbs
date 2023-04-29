@@ -17,8 +17,7 @@
                     <h3 class="text-primary"> </i>vegeFood</h3>
                 </a>
                 <div class="d-flex align-items-center ms-4 mb-4">
-                    <a href="/dashboard" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
-                   
+                    <a href="/dashboard" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a> 
                 </div>
                 <div class="navbar-nav w-100">
                     
@@ -30,9 +29,7 @@
                 </div>
             </nav>
         </div>
-        <!-- Sidebar End -->
-
-
+        <!-- Sidebar End --> 
         <!-- Content Start -->
         <div class="content">
             <!-- Navbar Start -->
@@ -46,25 +43,37 @@
                 <form class="d-none d-md-flex ms-4">
                     <input class="form-control border-0" type="search" placeholder="Search">
                 </form>
-                <div class="navbar-nav align-items-center ms-auto">
-                     
-                    
+                <div class="navbar-nav align-items-center ms-auto"> 
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"> 
                             <span class="d-none d-lg-inline-flex">John Doe</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-light border-1 rounded-0 rounded-bottom m-0">
-                             <a href="/adminprofile" class="dropdown-item">My Profile</a>
-                            <a href="/adminsignout" onclick="return confirm(`are sure to sign out`)" class="dropdown-item">Log Out</a>
-                        </div>
+                              <a href="/adminprofile" class="dropdown-item">My Profile</a>
+                              <a href="/adminsignout" onclick="return confirm(`are sure to sign out`)" class="dropdown-item">Log Out</a>                        </div>
                     </div>
                 </div>
             </nav>
             <!-- Navbar End --> 
-
             <!-- Sale & Revenue Start -->
             <div class="container-fluid pt-4 px-4">
+       <form action="/coupon" method="post" class="row my-2 g-3">
+  <div class="col-md-4">
+    <label for="couponcode" class="form-label">Enter Coupon</label>
+    <input type="text" class="form-control" required name="couponcode" id="couponcode">
+  </div>
+  <div class="col-md-4">
+    <label for="couponamount" class="form-label">Enter Coupon Amount</label>
+    <input type="number" class="form-control" required name="couponamount" id="couponamount">
+  </div>
+  <div class="col-md-4">
+    <button type="submit" class="btn btn-success mt-4">Add Coupon</button>
+  </div>
+</form>
+
+                {{#if addCoupon}}
+                <p>Your coupon cart is empty now</p>
+                {{else}}
                 <div class="row g-4">
                     <div class="col-12">
                         <div class="bg-light rounded h-100 p-4">
@@ -72,25 +81,27 @@
                             <div class="table-responsive">
                                 <table class="table  table-hover">
                                     <thead>
-                                        <tr>
+                                        <tr class="text-center">
                                             <th scope="col">#</th>
                                             <th scope="col"> Name</th> 
-                                            <th scope="col">Email</th>
-                                            <th scope="col">Mobile</th> 
-                                            <th scope="col">Actions</th>
+                                            <th scope="col"> Amount</th> 
+                                            <th scope="col"> Created At</th> 
+                                            <th scope="col">Remove</th>
+                                            <th scope="col">Status/Unlist</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{#each users}}
-                                        <tr>
+                                        {{#each allCoupons}}
+                                        <tr class="text-center">
                                             <th scope="row">{{@index}}</th>
-                                            <td>{{name}}</td> 
-                                            <td>{{email}}</td>
-                                            <td>{{phone}}</td>
-                                            {{#if bolckUser}} 
-                                            <td onclick="return confirm(`are you sure to unblock {{name}}`)" ></div><a href="/userStatus/{{_id}}"><button class="btn btn-success">UnBlock</button></a></td>
+                                            <td>{{code}}</td>                                             
+                                            <td>{{offer}}</td>
+                                            <td>{{time}}</td>
+                                            <td onclick="return confirm(`are you sure to Delete {{code}} coupon`)" ><a href="/couponremove?id={{_id}}"><button class="btn btn-danger">Delete</button></a></td>
+                                            {{#if CouponStatus}}
+                                            <td onclick="return confirm(`are you sure to UnList {{code}} coupon`)" ><a href="/couponStatus?id={{_id}}"><button class="btn btn-danger">UnList</button></a></td>
                                             {{else}}
-                                            <td onclick="return confirm(`are you sure to block {{name}}`)" ><a href="/userStatus/{{_id}}"><button class="btn btn-danger">Block</button></a></td>
+                                            <td onclick="return confirm(`are you sure to List {{code}} coupon`)"><a href="/couponStatus?id={{_id}}"><button class="btn btn-success">List</button></a></td>
                                             {{/if}}
                                         </tr>
                                         {{/each}}
@@ -99,11 +110,11 @@
                             </div>
                         </div>
                     </div>
+                {{/if}}
                 </div>
             </div>
             <!-- Sale & Revenue End --> 
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
-    </div>
-
-    <!-- JavaScript Libraries -->
+    </div>    
+</div>

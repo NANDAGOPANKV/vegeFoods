@@ -90,19 +90,15 @@
           <div class="cart-total mb-3">
             <h3>Coupon Code</h3>
             <p>Enter your coupon code if you have one</p>
-            <form action="#" class="info">
-              <div class="form-group">
-                <label for="">Coupon code</label>
-                <input
-                  type="text"
-                  class="form-control text-left px-3"
-                  placeholder=""
-                />
-              </div>
-            </form>
+<form id="coupon-form">
+  <div class="form-group">
+    <label for="coupon-code">Coupon code:</label>
+    <input type="text" class="form-control" name="coupon-code" id="coupon-code" placeholder="Enter coupon code" required>
+  </div> 
+  <button type="submit" class="btn btn-primary py-3 px-4">Apply coupon</button>
+</form>
+
           </div>
-          <p><a href="checkout.html" class="btn btn-primary py-3 px-4">Apply
-              Coupon</a></p>
         </div>
         <div class="col-lg-4 mt-5 cart-wrap ftco-animate">
           <div class="cart-total mb-3">
@@ -332,7 +328,38 @@
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
- <script>
+
+<script>
+  // coupon apply
+   $(document).ready(function() {
+  $('#coupon-form').submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const couponCode = $('#coupon-code').val(); // Get the coupon code from the input field
+    
+    // Log the coupon code to the console
+    const coupon = {
+      code:couponCode
+    }
+
+    // Perform the AJAX request to your server endpoint
+    $.ajax({
+      type: 'POST',
+      url: '/applyCoupon',
+      data: coupon,
+      success: function(response) {
+        console.log(response); // Log the response from the server
+      },
+      error: function(error) {
+        console.log(error); // Log any errors to the console
+      }
+    });
+  });
+});
+
+</script>
+
+ <script> 
   // remove item from cart
   const removeItemCart = function(id){
     console.log(id)

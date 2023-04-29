@@ -214,6 +214,7 @@
                   </a></p>
                 </div>
               </div>
+              
             </div>
           </div>
         </form><!-- END -->
@@ -426,7 +427,7 @@ function rozarpayPayment(val,data){
    // alert(response.razorpay_payment_id);
    // alert(response.razorpay_order_id);
    // alert(response.razorpay_signature) 
-    verifyPayment(response,order)
+    verifyPayment(response,order) 
     },  
     "prefill": {
         "name": data.name, //your customer's name
@@ -460,6 +461,5 @@ function rozarpayPayment(val,data){
     window.location.href = req;
   })
 }
-
 </script>
 </div> 

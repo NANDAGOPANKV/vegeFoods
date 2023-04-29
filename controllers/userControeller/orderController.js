@@ -244,6 +244,7 @@ const orderCancel = async (req, res) => {
 const verifyPayment = async (req, res) => {
   console.log("here");
   const paymentDetails = req.body;
+  console.log(paymentDetails);
   const uId = req.session.userData;
   const userId = req.session.userId;
 
