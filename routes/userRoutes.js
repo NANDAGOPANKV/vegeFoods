@@ -56,6 +56,10 @@ const {
   orderCancel,
   verifyPayment,
 } = require("../controllers/userControeller/orderController");
+// coupon controller
+const {
+  checkCoupon,
+} = require("../controllers/userControeller/couponController");
 
 const userRouter = express();
 
@@ -87,10 +91,10 @@ userRouter.patch("/pdecriment", decrement);
 userRouter.patch("/pincrement", increment);
 // remove one item from cart
 userRouter.post("/removeitemcart", removeItemFromCart);
+// -------------------------- coupon
 // apply coupon
-userRouter.post("/applyCoupon",(req,res)=>{
-  console.log(req.body);
-})
+userRouter.post("/applyCoupon", checkCoupon);
+
 // checkout -----------------take the value and order
 userRouter.get("/checkout", isUserLoggedIn, checkoutController);
 userRouter.post("/checkoutpost", checkoutControllerPost);

@@ -18,6 +18,9 @@ const couponScheme = mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    usedUsersList: {
+      type: Array,
+    },
   },
   { timestamps: true }
 );

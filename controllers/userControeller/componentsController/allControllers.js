@@ -387,6 +387,7 @@ const cartAll = async (req, res) => {
           subPrice,
           uid,
           Stock,
+          uId: userID._id,
         });
       } else {
         res.render("wishlist", {

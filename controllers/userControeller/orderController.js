@@ -4,8 +4,7 @@ const Order = require("../../models/adminSchema/orderSchema");
 const Cart = require("../../models/adminSchema/addToCartSchema");
 const Products = require("../../models/adminSchema/productsSchema");
 // rozar pay
-const Rozarpay = require("razorpay");
-const { log } = require("console");
+const Rozarpay = require("razorpay"); 
 
 let instance = new Rozarpay({
   key_id: "rzp_test_0y2DtbdwtwS8LD",
@@ -242,9 +241,7 @@ const orderCancel = async (req, res) => {
 
 // verify
 const verifyPayment = async (req, res) => {
-  console.log("here");
   const paymentDetails = req.body;
-  console.log(paymentDetails);
   const uId = req.session.userData;
   const userId = req.session.userId;
 
@@ -258,7 +255,6 @@ const verifyPayment = async (req, res) => {
   if (hmac == paymentDetails["payment[razorpay_signature]"]) {
     // change payment status
     const paymentMethod = req.session.paymentMethod;
-    console.log("order data");
     const orderData = req.session.userOrderData;
 
     const detailsObj = {
@@ -323,8 +319,7 @@ const verifyPayment = async (req, res) => {
 
     res.json({ redirectUrl: "/orderSuccess" });
   } else {
-    res.json({ status: "Payment Failed" });
-    console.log("payment Collapsed");
+    res.json({ status: "Payment Failed" }); 
   }
 };
 
