@@ -60,6 +60,10 @@ const {
 const {
   checkCoupon,
 } = require("../controllers/userControeller/couponController");
+const {
+  walletController,
+  addMoney,
+} = require("../controllers/userControeller/walletController");
 
 const userRouter = express();
 
@@ -94,7 +98,10 @@ userRouter.post("/removeitemcart", removeItemFromCart);
 // -------------------------- coupon
 // apply coupon
 userRouter.post("/applyCoupon", checkCoupon);
-
+// -------------------------- wallet
+userRouter.get("/wallet", isUserLoggedIn, walletController);
+// add money to wallet
+userRouter.post("/addmoney", addMoney);
 // checkout -----------------take the value and order
 userRouter.get("/checkout", isUserLoggedIn, checkoutController);
 userRouter.post("/checkoutpost", checkoutControllerPost);

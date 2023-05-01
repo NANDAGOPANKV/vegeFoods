@@ -30,6 +30,10 @@ const usersSchema = mongoose.Schema(
       type: Array,
       required: false,
     },
+    wallet: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

@@ -1,10 +1,13 @@
 const crypto = require("crypto");
-
+// schema
 const Order = require("../../models/adminSchema/orderSchema");
 const Cart = require("../../models/adminSchema/addToCartSchema");
 const Products = require("../../models/adminSchema/productsSchema");
+const User = require("../../models/userSchema/usersSchema");
+// time module
+const { getFullCurrentDate } = require("../../middlewares/time");
 // rozar pay
-const Rozarpay = require("razorpay"); 
+const Rozarpay = require("razorpay");
 
 let instance = new Rozarpay({
   key_id: "rzp_test_0y2DtbdwtwS8LD",
@@ -24,7 +27,7 @@ const placeOrderController = async (req, res) => {
       key.replace(/^value\[(.*)\]$/, "$1"),
       value,
     ])
-  );   
+  );
 
   const cId = req.session.cartId;
 
@@ -86,7 +89,7 @@ const placeOrderController = async (req, res) => {
         },
         paymentMethod: detailsObj.orderMethod,
         orderStatus: pMethod,
-        date: Date.now(),
+        date: getFullCurrentDate(),
       });
       // saving order details in orders
       await ordersListing.save();
@@ -109,6 +112,70 @@ const placeOrderController = async (req, res) => {
       console.log("reached");
       await Cart.updateOne({ user: userId }, { $set: { product: [] } });
       res.json({ redirectUrl: "/orderSuccess" });
+    } else if (orderDetails?.optradio == "wallet") {
+      // wallet
+      const { wallet } = await User.findOne({ _id: userId });
+      if (wallet > 0) {
+        if (detailsObj?.total > wallet) {
+          res.json({ bal: "Check Wallet Balance" });
+        } else {
+          // order placing
+          const amt = Number(detailsObj.total.slice(1));
+
+          let qty = allCartItems?.product.map((data) => data?.quantity);
+          const ordersListing = new Order({
+            user: uId,
+            products: allCartItems?.product,
+            totalAmount: amt,
+            delCost: detailsObj.delCost,
+            address: {
+              name: detailsObj.name,
+              email: detailsObj.email,
+              country: detailsObj.country,
+              state: detailsObj.state,
+              address: detailsObj.address,
+              city: detailsObj.city,
+              postalCode: detailsObj.postalCode,
+              phone: detailsObj.phone,
+              tandc: detailsObj.tandc,
+            },
+            paymentMethod: detailsObj.orderMethod,
+            orderStatus: pMethod,
+            date: getFullCurrentDate(),
+          });
+          // saving order details in orders
+          await ordersListing.save();
+          // decrease stock from product
+          const products = await Products.find();
+
+          const cart = await Cart.findOne({ user: userId });
+          cart.product.forEach(async (element) => {
+            products.forEach(async (elem, index) => {
+              if (element.productId == elem.id) {
+                const productStock = products[index].stock;
+                await Products.findOneAndUpdate(
+                  { _id: elem?._id },
+                  { $set: { stock: productStock - element.quantity } },
+                  { new: true }
+                );
+              }
+            });
+          });
+          // order placing
+
+          // const wallet
+          await User.findOneAndUpdate(
+            { _id: userId },
+            { $inc: { wallet: -amt } },
+            { new: true }
+          );
+          // removing cart decrease amount of money from wallet
+          await Cart.updateOne({ user: userId }, { $set: { product: [] } });
+          res.json({ redirectUrl: "/orderSuccess" });
+        }
+      } else {
+        res.json({ error: "wallet empty" });
+      }
     } else {
       // online payment
       let qty = allCartItems?.product.map((data) => data?.quantity);
@@ -116,11 +183,13 @@ const placeOrderController = async (req, res) => {
       const oid = ordersList?._id;
       const { v4: uuidv4 } = require("uuid");
 
+      const amt = Number(detailsObj.total.slice(1));
+
       // generate a unique ID for the order
       const orderId = uuidv4();
 
       const options = {
-        amount: detailsObj.total * 100,
+        amount: amt * 100,
         currency: "INR",
         receipt: orderId,
       };
@@ -257,6 +326,8 @@ const verifyPayment = async (req, res) => {
     const paymentMethod = req.session.paymentMethod;
     const orderData = req.session.userOrderData;
 
+    const amt = Number(orderData?.total.slice(1));
+
     const detailsObj = {
       name: orderData?.name,
       email: orderData?.email,
@@ -267,7 +338,7 @@ const verifyPayment = async (req, res) => {
       postalCode: orderData?.postalCode,
       phone: orderData?.phone,
       tandc: orderData?.tandc,
-      total: orderData?.total,
+      total: amt,
       subtTotal: orderData?.subtTotal,
       delCost: orderData?.delCost,
       orderMethod: orderData?.orderMethod,
@@ -319,7 +390,7 @@ const verifyPayment = async (req, res) => {
 
     res.json({ redirectUrl: "/orderSuccess" });
   } else {
-    res.json({ status: "Payment Failed" }); 
+    res.json({ status: "Payment Failed" });
   }
 };
 
