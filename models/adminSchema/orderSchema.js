@@ -43,7 +43,8 @@ const orderSchema = mongoose.Schema(
       required: "ordered",
     },
     date: {
-      type: Date,
+      type: String,
+      require: true,
     },
   },
   { timestamps: true }

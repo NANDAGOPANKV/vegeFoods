@@ -183,9 +183,17 @@ const placeOrderController = async (req, res) => {
       const oid = ordersList?._id;
       const { v4: uuidv4 } = require("uuid");
 
-      const amt = Number(detailsObj.total.slice(1));
-
-      // generate a unique ID for the order
+      let amt;
+      let checker;
+      amt = detailsObj.total;
+      checker = amt.includes("₹");
+      if (checker == true) {
+        amt = Number(detailsObj.total.slice(1));
+        console.log(amt);
+      } else {
+        amt = Number(detailsObj.total);
+        console.log(amt);
+      }
       const orderId = uuidv4();
 
       const options = {
@@ -193,6 +201,8 @@ const placeOrderController = async (req, res) => {
         currency: "INR",
         receipt: orderId,
       };
+
+      console.log(options);
 
       instance.orders.create(options, (err, order) => {
         if (err) {

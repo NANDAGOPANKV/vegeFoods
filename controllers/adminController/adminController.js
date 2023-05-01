@@ -195,13 +195,15 @@ const orderDetaild = async (req, res) => {
   // find order by id
   let order = await Orders.find({ _id: oId }).lean();
   const addressField = await Orders.find({ _id: oId }).select("address").lean();
- 
-  const [{ paymentMethod, _id, orderStatus }] = order;
+
+  const [{ paymentMethod, _id, orderStatus, date }] = order;
   const [{ name, email, phone, address }] = addressField.map(
     (data) => data?.address
   );
 
   order = order?.map((data) => data?.products).flat(Infinity);
+
+  console.log(order);
 
   res.render("orderDetail", {
     admindash: true,
@@ -213,6 +215,7 @@ const orderDetaild = async (req, res) => {
     phone,
     order,
     orderStatus,
+    date,
   });
   // res.send(req.query.id);
 };
