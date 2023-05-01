@@ -298,7 +298,26 @@ const returnOrder = async (req, res) => {
 // canel order
 const orderCancel = async (req, res) => {
   const id = req.query.id;
+  const uId = req.session.userId;
   const status = "order canceled";
+
+  const { paymentMethod, totalAmount, delCost, discount } =
+    await Order.findById(id);
+
+  console.log(paymentMethod, totalAmount + delCost + discount);
+  const total = totalAmount + delCost + discount;
+
+  // adding back the money to the wallet
+  if (paymentMethod == "wallet") {
+    await User.findOneAndUpdate(
+      { _id: uId },
+      {
+        $inc: { wallet: total },
+      },
+      { new: true }
+    );
+  }
+
   const order = await Order.findOneAndUpdate(
     { _id: id },
     { orderStatus: status },
