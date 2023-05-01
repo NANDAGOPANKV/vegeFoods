@@ -1,0 +1,162 @@
+<body>
+  <div class="container" style="margin-top: 80px;">
+    <h1>Welcome back, {{name}}</h1>
+    <div class="row mb-3">
+      <div class="col-lg-4 col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Available Balance</h5>
+            <p class="card-text">&#x20b9;{{wallet}}.00</p>
+          </div>
+        </div>
+      </div>
+      <div class="col h-100 w-100 mt-3 text-center">
+        <!-- Button trigger modal -->
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#exampleModal"
+        >Add Money</button>
+      </div>
+    </div>
+
+    {{! modal }}
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add Money To Your
+              Wallet</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <form id="modal-form">
+            <div class="modal-body">
+              <input
+              aria-selected="true"
+                type="number"
+                name="amount"
+                id="amount"
+                class="form-control"
+                placeholder="Enter Amount Here..."
+              />
+              <input type="hidden" id="userIdInput" value="{{uId}}">
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >Close</button>
+              <input
+                type="submit"
+                class="btn btn-primary"
+                value="Save Changes"
+              />
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+    {{! modal }}
+
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Transaction History</h5>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>04/30/2023</td>
+                    <td>Deposit</td>
+                    <td>&#x20b9;1,000.00</td>
+                    <td>&#x20b9;5,000.00</td>
+                  </tr>
+                  <tr>
+                    <td>04/28/2023</td>
+                    <td>Withdrawal</td>
+                    <td>&#x20b9;500.00</td>
+                    <td>&#x20b9;4,000.00</td>
+                  </tr>
+                  <tr>
+                    <td>04/25/2023</td>
+                    <td>Deposit</td>
+                    <td>&#x20b9;2,000.00</td>
+                    <td>&#x20b9;4,500.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  
+ $(document).ready(function() {
+  $('#modal-form').on('submit', function(event) {
+    event.preventDefault(); // prevent the default form submission
+
+    // get the form data
+    var formDataArray = $(this).serializeArray();
+     var userId = $('#userIdInput').val(); 
+     formDataArray.push({ name: "userId", value: userId });
+    var formData = {};
+
+    // convert form data array to object
+    formDataArray.forEach(function(field) {
+      formData[field.name] = field.value;
+    });
+
+    // make the AJAX request
+    $.ajax({
+      url: '/addmoney', // replace with your own PHP file name and path
+      type: 'POST',
+      data: formData,
+      success: function(response) {
+        // handle the successful response
+        console.log(response);
+        window.location.href = response?.req;
+      },
+      error: function(error) {
+        // handle the error response
+        console.log(error);
+      }
+    });
+  });
+});
+
+</script>
