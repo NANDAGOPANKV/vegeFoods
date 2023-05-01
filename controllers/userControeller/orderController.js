@@ -202,8 +202,6 @@ const placeOrderController = async (req, res) => {
         receipt: orderId,
       };
 
-      console.log(options);
-
       instance.orders.create(options, (err, order) => {
         if (err) {
           res.json({ error: err });
@@ -213,7 +211,6 @@ const placeOrderController = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error(error);
     res.status(500).send("Error saving order details.");
   }
 };
