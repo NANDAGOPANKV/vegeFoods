@@ -179,8 +179,24 @@ const signOutController = (req, res) => {
 };
 
 // dashboars
-const dashBoard = (req, res) => {
-  res.render("home", { admindash: true });
+const dashBoard = async (req, res) => {
+  // get all the sales data
+  const allOrders = await Orders.find().count().lean();
+  const deliverdOrders = await Orders.find({
+    orderStatus: { $eq: "delivered" },
+  })
+    .count()
+    .lean();
+  const allReturnOrders = await Orders.find({
+    orderStatus: { $eq: "return accepted" },
+  }).count();
+
+  res.render("home", {
+    admindash: true,
+    allOrders,
+    deliverdOrders,
+    allReturnOrders,
+  });
 };
 
 // order list

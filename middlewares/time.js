@@ -1,5 +1,17 @@
 const getFullCurrentDate = () => {
   let currentDate = new Date();
+  // day
+  const daysOfWeek = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const dayOfWeek = currentDate.getDay();
+  const dayName = daysOfWeek[dayOfWeek];
 
   // current date
   // adjust 0 before single digit date
@@ -19,7 +31,7 @@ const getFullCurrentDate = () => {
 
   // prints date & time in YYYY-MM-DD HH:MM:SS format
   const completeDate =
-    hours + ":" + minutes + "   " + date + "/" + month + "/" + year;
+    dayName + hours + ":" + minutes + "   " + date + "/" + month + "/" + year;
   return completeDate;
 };
 
