@@ -49,6 +49,7 @@ const {
   unlisOrUnlistController,
   removeController,
 } = require("../controllers/adminController/couponController");
+const { getOrders } = require("../controllers/adminController/excelController");
 
 // multer
 const upload = multer({ storage: storeageFunc });
@@ -74,7 +75,8 @@ adminRoute.get("/adminsignout", signOutController);
 // dashboard
 adminRoute.get("/dashboard", isAdminLoggedIn, dashBoard);
 // ----------------------users
-
+// sales report excel
+adminRoute.get("/getOrders", getOrders);
 // all users
 adminRoute.get("/userslist", isAdminLoggedIn, findAllUsers);
 // ----------------------orders
