@@ -76,7 +76,7 @@ adminRoute.get("/adminsignout", signOutController);
 adminRoute.get("/dashboard", isAdminLoggedIn, dashBoard);
 // ----------------------users
 // sales report excel
-adminRoute.get("/getOrders", getOrders);
+adminRoute.post("/getOrders", getOrders);
 // all users
 adminRoute.get("/userslist", isAdminLoggedIn, findAllUsers);
 // ----------------------orders

@@ -30,8 +30,8 @@ const getFullCurrentDate = () => {
   let minutes = currentDate.getMinutes();
 
   // prints date & time in YYYY-MM-DD HH:MM:SS format
-  const completeDate =
-    dayName + hours + ":" + minutes + "   " + date + "/" + month + "/" + year;
+  const completeDate = year + "-" + month + "-" + date;
+  // dayName + hours + ":" + minutes + "   " + date + "/" + month + "/" + year;
   return completeDate;
 };
 

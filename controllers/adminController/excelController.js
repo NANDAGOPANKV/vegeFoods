@@ -1,7 +1,12 @@
 const excel = require("exceljs");
 const Orders = require("../../models/adminSchema/orderSchema");
+const { getFullCurrentDate } = require("../../middlewares/time");
 
+// making an xel copy
 const getOrders = async (req, res) => {
+  const time = req.body?.timeToCheck;
+  const liveTime = req.body?.liveTimeToCheck;
+
   try {
     let workBook = new excel.Workbook();
     let workSheet = workBook.addWorksheet("My Orders");
@@ -18,7 +23,9 @@ const getOrders = async (req, res) => {
 
     let counter = 1;
 
-    let ordersData = await Orders.find().lean();
+    let ordersData = await Orders.find({
+      date: { $gte: time, $lte: liveTime },
+    }).lean();
 
     ordersData.forEach((order) => {
       order.no = counter;

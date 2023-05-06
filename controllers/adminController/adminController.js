@@ -180,7 +180,7 @@ const signOutController = (req, res) => {
 
 // dashboars
 const dashBoard = async (req, res) => {
-  // get all the sales data
+  // get all the sales data * only orders
   const allOrders = await Orders.find().count().lean();
   const deliverdOrders = await Orders.find({
     orderStatus: { $eq: "delivered" },
@@ -191,17 +191,35 @@ const dashBoard = async (req, res) => {
     orderStatus: { $eq: "return accepted" },
   }).count();
 
+  // payment wise sales
+  const online = await Orders.find({
+    paymentMethod: { $eq: "Online" },
+  })
+    .count()
+    .lean();
+  const wallet = await Orders.find({
+    paymentMethod: { $eq: "wallet" },
+  })
+    .count()
+    .lean();
+  const cod = await Orders.find({ paymentMethod: { $eq: "COD" } })
+    .count()
+    .lean();
+
   res.render("home", {
     admindash: true,
     allOrders,
     deliverdOrders,
     allReturnOrders,
+    online,
+    cod,
+    wallet,
   });
 };
 
 // order list
 const orderList = async (req, res) => {
-  const allOrders = await Orders.find().lean();
+  const allOrders = await Orders.find().sort({ createdAt: -1 }).lean();
   res.render("ordersList", { admin: true, admindash: true, allOrders });
 };
 
@@ -218,8 +236,6 @@ const orderDetaild = async (req, res) => {
   );
 
   order = order?.map((data) => data?.products).flat(Infinity);
-
-  console.log(order);
 
   res.render("orderDetail", {
     admindash: true,

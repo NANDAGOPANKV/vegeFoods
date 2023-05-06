@@ -69,12 +69,25 @@ const placeOrderController = async (req, res) => {
     // making an copy inside session
     req.session.userOrderData = allData;
 
-    if (detailsObj?.orderMethod === "COD") {
-      let qty = allCartItems?.product.map((data) => data?.quantity);
-      const ordersListing = new Order({
+    if (orderDetails?.optradio == "COD") {
+      const OrderCod = require("../../models/adminSchema/orderSchema");
+
+      let amt;
+      let checker;
+      amt = detailsObj.total;
+      checker = amt.includes("₹");
+      if (checker == true) {
+        amt = Number(detailsObj.total.slice(1));
+        console.log(amt);
+      } else {
+        amt = Number(detailsObj.total);
+        console.log(amt);
+      }
+
+      const data = new OrderCod({
         user: uId,
         products: allCartItems?.product,
-        totalAmount: detailsObj.total,
+        totalAmount: amt,
         delCost: detailsObj.delCost,
         address: {
           name: detailsObj.name,
@@ -91,11 +104,14 @@ const placeOrderController = async (req, res) => {
         orderStatus: pMethod,
         date: getFullCurrentDate(),
       });
+
       // saving order details in orders
-      await ordersListing.save();
+      await data.save();
+
+      console.log("cod");
       // decrease stock from product
       const products = await Products.find();
-
+      console.log("reached1");
       const cart = await Cart.findOne({ user: userId });
       cart.product.forEach(async (element) => {
         products.forEach(async (elem, index) => {
@@ -109,10 +125,12 @@ const placeOrderController = async (req, res) => {
           }
         });
       });
+
       console.log("reached");
       await Cart.updateOne({ user: userId }, { $set: { product: [] } });
-      res.json({ redirectUrl: "/orderSuccess" });
+      res.json({ orderSuccess: true });
     } else if (orderDetails?.optradio == "wallet") {
+      console.log("wallet");
       // wallet
       const { wallet } = await User.findOne({ _id: userId });
       if (wallet > 0) {
@@ -120,7 +138,19 @@ const placeOrderController = async (req, res) => {
           res.json({ bal: "Check Wallet Balance" });
         } else {
           // order placing
-          const amt = Number(detailsObj.total.slice(1));
+          // const amt = Number(detailsObj.total.slice(1));
+
+          let amt;
+          let checker;
+          amt = detailsObj?.total;
+          checker = amt.includes("₹");
+          if (checker == true) {
+            amt = Number(detailsObj.total.slice(1));
+            console.log(amt);
+          } else {
+            amt = Number(detailsObj.total);
+            console.log(amt);
+          }
 
           let qty = allCartItems?.product.map((data) => data?.quantity);
           const ordersListing = new Order({
@@ -177,6 +207,7 @@ const placeOrderController = async (req, res) => {
         res.json({ error: "wallet empty" });
       }
     } else {
+      console.log("online payment");
       // online payment
       let qty = allCartItems?.product.map((data) => data?.quantity);
       req.session.paymentMethod = "online payment";
@@ -194,6 +225,7 @@ const placeOrderController = async (req, res) => {
         amt = Number(detailsObj.total);
         console.log(amt);
       }
+
       const orderId = uuidv4();
 
       const options = {
@@ -211,6 +243,7 @@ const placeOrderController = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(500).send("Error saving order details.");
   }
 };
@@ -308,30 +341,33 @@ const orderCancel = async (req, res) => {
   const uId = req.session.userId;
   const status = "order canceled";
 
-  const { paymentMethod, totalAmount, delCost, discount } =
-    await Order.findById(id);
+  try {
+    const { paymentMethod, totalAmount, delCost, discount } =
+      await Order.findById(id);
 
-  console.log(paymentMethod, totalAmount + delCost + discount);
-  const total = totalAmount + delCost + discount;
+    const total = totalAmount + delCost + discount;
 
-  // adding back the money to the wallet
-  if (paymentMethod == "wallet") {
-    await User.findOneAndUpdate(
-      { _id: uId },
-      {
-        $inc: { wallet: total },
-      },
+    // adding back the money to the wallet
+    if (paymentMethod == "wallet") {
+      await User.findOneAndUpdate(
+        { _id: uId },
+        {
+          $inc: { wallet: total },
+        },
+        { new: true }
+      );
+    }
+
+    const order = await Order.findOneAndUpdate(
+      { _id: id },
+      { orderStatus: status },
       { new: true }
     );
+
+    res.redirect("/myorders");
+  } catch (error) {
+    res.json({ error });
   }
-
-  const order = await Order.findOneAndUpdate(
-    { _id: id },
-    { orderStatus: status },
-    { new: true }
-  );
-
-  res.redirect("/myorders");
 };
 
 // verify

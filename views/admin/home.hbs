@@ -67,6 +67,8 @@
             <div class="container-fluid pt-4 px-4">
                 <div>
                    <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+                   <canvas id="myChart2" style="width:100%;max-width:600px"></canvas>
+                   <canvas id="myChart3" style="width:100%;max-width:600px"></canvas>
                 </div> 
             </div>
             <!-- Sale & Revenue End -->
@@ -107,6 +109,7 @@ let three = "{{allReturnOrders}}"
 var yValues = [one, two, three,0];
 var barColors = ["red", "green","blue","orange","brown"];
 
+// c1
 new Chart("myChart", {
   type: "bar",
   data: {
@@ -124,6 +127,52 @@ new Chart("myChart", {
     }
   }
 });
+
+// c2
+new Chart("myChart2", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "All Category Orders"
+    }
+  }
+});
+
+let online = '{{online}}'
+let cod = '{{cod}}'
+let wallet = '{{wallet}}'
+
+const a = ["online", "cod","wallet"]
+const y = [online,cod,wallet,0]
+
+// c3
+new Chart("myChart3", {
+  type: "bar",
+  data: {
+    labels: a,
+    datasets: [{
+      backgroundColor: barColors,
+      data: y,
+    }]
+  },
+  options: {
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "All Payment Methods"
+    }
+  }
+});
+
 </script> 
 </div>
 

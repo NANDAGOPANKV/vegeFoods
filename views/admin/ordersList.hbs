@@ -70,7 +70,12 @@
                         <div class="bg-light rounded h-100 p-4">
  
                             <h6 class="mb-4">All Orders</h6>
-                            <a  class="btn btn-primary m-3" href='/getOrders'  onclick="return confirm(`Do You Want To Download`)" >print all orders</a>
+                            <p>from which date ?</p>
+                            <form action="/getOrders" method="post">
+                            <input type="date" value="lv" name="timeToCheck">
+                            <input type="date" value="lv" name="liveTimeToCheck">
+                            <input type="submit" class="btn btn-primary m-3" href='/getOrders'  onclick="return confirm(`Do You Want To Download`)"  value="print all orders" />
+                            </form>
                             <div class="table-responsive">
                                 <table class="table  table-hover">
                                     <thead>
