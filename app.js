@@ -7,6 +7,9 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+// dot env config
+const dotEnv = require("dotenv");
+dotEnv.config();
 
 // data base import
 const db = require("./db/connection");
@@ -78,6 +81,7 @@ const adminRoutes = require("./routes/adimRoutes");
 app.use("/", adminRoutes);
 
 // serve litem
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
   console.log("server running");
 });
