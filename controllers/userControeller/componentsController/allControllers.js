@@ -2,10 +2,10 @@
 const Product = require("../../../models/adminSchema/productsSchema");
 const User = require("../../../models/userSchema/usersSchema");
 const Cart = require("../../../models/adminSchema/addToCartSchema");
-const wishList = require("../../../models/adminSchema/wishList");
+const wishList = require("../../../models/adminSchema/wishList"); 
 
 // home controller
-const homeController = (req, res) => {
+const homeController = async (req, res) => {
   if (req.session.userLoggedIn) {
     res.render("home", { user: true, userLogged: true });
   } else {
@@ -291,7 +291,6 @@ const cartController = async (req, res) => {
               });
             }
           } else {
-            console.log("here");
             const data = new Cart({
               user: userId,
               product: [
@@ -312,7 +311,6 @@ const cartController = async (req, res) => {
             });
           }
         } else {
-          console.log("here");
           const data = new Cart({
             user: userId,
             product: [

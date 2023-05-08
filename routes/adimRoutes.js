@@ -67,7 +67,7 @@ adminRoute.post("/adminsigninpost", noEntryAfterSignIn, adminSignInPost);
 // signUp
 adminRoute.get("/adminsignup", signUpController);
 // signUp post
-adminRoute.post("/adminsignuppost", isAdminLoggedIn, adminsignuppost);
+adminRoute.post("/adminsignuppost", adminsignuppost);
 // sign out
 adminRoute.get("/adminsignout", signOutController);
 // ----------------------home

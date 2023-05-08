@@ -1,9 +1,10 @@
 const dotenv = require("dotenv");
 dotenv.config();
 const mongoose = require("mongoose");
+const connector = process.env.DB_connection;
 
 mongoose
-  .connect(process.env.DB_connection)
+  .connect(connector)
   .then(() => {
     console.log("mongodb connected");
   })

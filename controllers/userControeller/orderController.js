@@ -4,6 +4,7 @@ const Order = require("../../models/adminSchema/orderSchema");
 const Cart = require("../../models/adminSchema/addToCartSchema");
 const Products = require("../../models/adminSchema/productsSchema");
 const User = require("../../models/userSchema/usersSchema");
+
 // time module
 const { getFullCurrentDate } = require("../../middlewares/time");
 // rozar pay
@@ -258,7 +259,9 @@ const myOrdersController = async (req, res) => {
   // show all possible order history
   const uId = req.session.userId;
 
-  const allMyOrders = await Order.find({ user: uId }).lean();
+  const allMyOrders = await Order.find({ user: uId })
+    .sort({ createdAt: -1 })
+    .lean();
 
   // check status for return
   const checkStatus = allMyOrders?.map((data) => data?.orderStatus);
@@ -305,6 +308,9 @@ const cartDetailedItem = async (req, res) => {
     .map((data) => data?.products)
     .flat(Infinity);
   // let daate = new Date().toLocaleDateString();
+
+  console.log(allMyOrdersProducts);
+  console.log(orderItem);
 
   res.render("orderItemSingle", {
     user: true,
@@ -428,7 +434,7 @@ const verifyPayment = async (req, res) => {
       },
       paymentMethod: detailsObj.orderMethod,
       orderStatus: detailsObj.paymentStatus,
-      date: Date.now(),
+      date: getFullCurrentDate(),
     });
 
     await ordersListing.save();

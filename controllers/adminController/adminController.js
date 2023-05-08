@@ -26,7 +26,7 @@ const findAllUsers = async (req, res) => {
 };
 
 // sign up for admin
-const adminsignuppost = async (req, res) => {
+const adminsignuppost = async (req, res) => { 
   try {
     const hashPassword = await bcript.hash(req.body.password, 10);
     const AdminData = new Admin({
@@ -168,7 +168,7 @@ const removeCategory = async (req, res) => {
 };
 
 // sign up admin controller
-const signUpController = (req, res) => {
+const signUpController = (req, res) => { 
   res.render("signUp", { admin: true, admindash: true });
 };
 
